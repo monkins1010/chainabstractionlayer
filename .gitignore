@@ -1,5 +1,10 @@
 **/node_modules
 **/dist
+!/packages/verus-networks/dist
+!/packages/verus-rpc-provider/dist
+!/packages/verus-rpc-fee-provider/dist
+!/packages/verus-swap-provider/dist
+!/packages/verus-utils/dist
 
 **/.nyc_output
 **/coverage
