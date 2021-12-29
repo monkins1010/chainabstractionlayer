@@ -6,7 +6,7 @@ import { VerusNetworks } from '../../../verus-networks/lib'
 import { VerusRpcProvider } from '../../lib'
 
 import mockJsonRpc from '../../../../test/mock/mockJsonRpc'
-import bitcoinRpc from '../../../../test/mock/bitcoin/rpc'
+import verusRpc from '../../../../test/mock/verus/rpc'
 
 chai.config.truncateThreshold = 0
 
@@ -18,13 +18,13 @@ describe('Verus RPC provider', () => {
     client = new Client()
     provider = new VerusRpcProvider({
       uri: 'http://localhost:27486',
-      username: 'bitcoin',
+      username: 'verus',
       password: 'local321',
       network: VerusNetworks.verus
     })
     client.addProvider(provider)
 
-    mockJsonRpc('http://localhost:18443', bitcoinRpc, 100)
+    mockJsonRpc('http://localhost:27486', verusRpc, 100)
   })
 
   describe('getFeePerByte', () => {
@@ -35,21 +35,14 @@ describe('Verus RPC provider', () => {
   })
 
   describe('getBlockHeight', () => {
-    it('should return correct block height', async () => {
-      // TODO: make this a real test
-      expect(true).to.equal(true)
-
-      //const height = await provider.getBlockHeight()
-      //expect(height).to.equal(114)
+    it('should return correct blockheight', async () => {
+      const height = await provider.getBlockHeight()
+      expect(height).to.equal(114)
     })
   })
 
   describe('decodeRawTransaction', () => {
     it('should return decoded transaction', async () => {
-      // TODO: fix this to be a proper test
-      expect(true).to.equal(true)
-
-      /*
       const tx = await provider.decodeRawTransaction(
         '01000000010000000000000000000000000000000000000000000000000000000000000000ffffffff0401660101ffffffff010001062a01000000232103106e56019acc637afca6202e526ada2d2c8653157c19839d0ea1c32c5925deffac00000000'
       )
@@ -78,16 +71,12 @@ describe('Verus RPC provider', () => {
             }
           }
         ]
-      }) */
+      })
     })
   })
 
   describe('getBlockByHash', () => {
     it('should return a block', async () => {
-      // TODO: fix this to be a proper test
-      expect(true).to.equal(true)
-
-      /*
       const block = await provider.getBlockByHash('494a5c635fd483c82a4a684f3982f52af27a29ee5217a0409cdad45afc2709d7')
 
       expect(block).to.deep.equal({
@@ -102,44 +91,32 @@ describe('Verus RPC provider', () => {
           '9f4d7c7e4e42ebf11e3985c9c4057c47b0513039ea437a33c390164bcd00bb5a',
           '504fc23592b61c262902e8574d5a053e8eb3f7d9d80d3c49f20ef4cd9167d2fd'
         ]
-      }) */
+      })
     })
   })
 
   describe('getBalance', () => {
     it('should return correct balance in sats', async () => {
-      // TODO: fix this to be a proper test
-      expect(true).to.equal(true)
-
-      /*
       const balance = await provider.getBalance(['mpJJQJzJhjceFabMVXAMB8i4VJcwwWQmcc'])
 
-      expect(balance.eq(20000000)).to.be.true */
+      expect(balance.eq(20000000)).to.be.true
     })
   })
 
   describe('getRawTransactionByHash', () => {
     it('should return a raw transaction', async () => {
-      // TODO: fix this to be a proper test
-      expect(true).to.equal(true)
-
-      /*
       const tx = await provider.getRawTransactionByHash(
         '504fc23592b61c262902e8574d5a053e8eb3f7d9d80d3c49f20ef4cd9167d2fd'
       )
 
       expect(tx).to.equal(
         '0200000001ff1157410fd0fe4363c96331565ea039a581fffd444297238014b61c22e120a4000000004847304402206797722ab2d452a41d3dbccbe046712218a3263596db92c432cdfade9d06355f02200b3c68caad6906d01eb589686d725551de1c3b3adb7874cb11271a91a323f12301feffffff0200e1f5050000000017a91448f1346b4453d0a208cef9d6b1722d87c6b3f11e87a4ce4a1f0000000017a9143acc14bffd075dcaeff623d4c4ac11472a1fcff78775020000'
-      ) */
+      )
     })
   })
 
   describe('getTransactionByHash', () => {
     it('should return a transaction', async () => {
-      // TODO: fix this to be a proper test
-      expect(true).to.equal(true)
-
-      /*
       const tx = await provider.getTransactionByHash('504fc23592b61c262902e8574d5a053e8eb3f7d9d80d3c49f20ef4cd9167d2fd')
 
       expect(tx).to.deep.equal({
@@ -200,7 +177,7 @@ describe('Verus RPC provider', () => {
         blockNumber: 630,
         fee: 3740,
         feePrice: 20
-      }) */
+      })
     })
   })
 })
