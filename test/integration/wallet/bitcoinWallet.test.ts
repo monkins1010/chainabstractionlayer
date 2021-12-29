@@ -88,10 +88,8 @@ function testWallet(chain: Chain) {
 
       await fundAddress(chain, firstAddress.address)
 
-      const {
-        address: actualAddress,
-        derivationPath: actualDerivationPath
-      } = await chain.client.wallet.getUnusedAddress()
+      const { address: actualAddress, derivationPath: actualDerivationPath } =
+        await chain.client.wallet.getUnusedAddress()
 
       const expectedSecondIndex = firstIndex + 1
       const addresses = await chain.client.wallet.getAddresses(0, 1 + expectedSecondIndex)
@@ -109,10 +107,8 @@ function testWallet(chain: Chain) {
 
       await fundAddress(chain, firstAddress.address)
 
-      const {
-        address: actualAddress,
-        derivationPath: actualDerivationPath
-      } = await chain.client.wallet.getUnusedAddress(change)
+      const { address: actualAddress, derivationPath: actualDerivationPath } =
+        await chain.client.wallet.getUnusedAddress(change)
 
       const expectedSecondIndex = firstIndex + 1
       const addresses = await chain.client.wallet.getAddresses(0, 1 + expectedSecondIndex, change)

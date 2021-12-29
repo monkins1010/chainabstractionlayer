@@ -60,8 +60,11 @@
     "webpack-node-externals": "^2.5.2"
   },
   "scripts": {
+    "split-verus-modules": "git subtree split --squash --prefix=packages/verus-networks -b verus-networks && git subtree split --squash --prefix=packages/verus-rpc-provider -b verus-rpc-provider && git subtree split --squash --prefix=packages/verus-rpc-fee-provider -b verus-rpc-fee-provider && git subtree split --squash --prefix=packages/verus-swap-provider -b verus-swap-provider && git subtree split --squash --prefix=packages/verus-utils -b verus-utils && git subtree split --squash --prefix=packages/types -b verus-types",
+    "push-verus-modules": "git checkout verus-networks && git push --set-upstream origin verus-networks && git checkout verus-rpc-provider && git push --set-upstream origin verus-rpc-provider && git checkout verus-rpc-fee-provider && git push --set-upstream origin verus-rpc-fee-provider && git checkout verus-swap-provider && git push --set-upstream origin verus-swap-provider && git checkout verus-utils && git push --set-upstream origin verus-utils && git checkout verus-types && git push --set-upstream origin verus-types",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "lint": "eslint . --ext .jsx,.ts,.tsx",
+    "lintfix": "eslint . --ext .jsx,.ts,.tsx --fix",
     "prettier": "prettier --write --ignore .gitignore .",
     "bootstrap": "lerna bootstrap --force-local",
     "docs": "typedoc",
@@ -122,5 +125,8 @@
     "lint",
     "build",
     "test:unit"
-  ]
+  ],
+  "dependencies": {
+    "standard-error": "^1.1.0"
+  }
 }
