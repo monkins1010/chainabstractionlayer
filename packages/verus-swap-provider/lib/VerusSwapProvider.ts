@@ -16,17 +16,17 @@ import {
   validateSecretAndHash,
   validateExpiration
 } from '@liquality/utils'
-import { BitcoinNetwork } from '@liquality/bitcoin-networks'
+import { VerusNetwork } from '@liquality/verus-networks'
 
 import { Psbt, script as bScript, payments } from 'bitcoinjs-lib'
 
 interface BitcoinSwapProviderOptions {
-  network: BitcoinNetwork
+  network: VerusNetwork
   mode?: bitcoin.SwapMode
 }
 
 export default class BitcoinSwapProvider extends Provider implements Partial<SwapProvider> {
-  _network: BitcoinNetwork
+  _network: VerusNetwork
   _mode: bitcoin.SwapMode
 
   constructor(options: BitcoinSwapProviderOptions) {

@@ -1,14 +1,14 @@
 /// <reference types="node" />
 import { Transaction, bitcoin, BigNumber, SwapParams, SwapProvider } from '@liquality/types';
 import { Provider } from '@liquality/provider';
-import { VerusNetwork } from '@liquality/verus-networks';
+import { BitcoinNetwork } from '@liquality/bitcoin-networks';
 import { payments } from 'bitcoinjs-lib';
 interface BitcoinSwapProviderOptions {
-    network: VerusNetwork;
+    network: BitcoinNetwork;
     mode?: bitcoin.SwapMode;
 }
 export default class BitcoinSwapProvider extends Provider implements Partial<SwapProvider> {
-    _network: VerusNetwork;
+    _network: BitcoinNetwork;
     _mode: bitcoin.SwapMode;
     constructor(options: BitcoinSwapProviderOptions);
     validateSwapParams(swapParams: SwapParams): void;
