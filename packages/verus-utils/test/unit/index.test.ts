@@ -39,8 +39,6 @@ describe('Verus Util', () => {
         hash: '53234f5d0dc8c8bcd7120652151e40a0c959618dfb45ed7d983fdbbc9ce86239',
         version: 2,
         size: 222,
-        vsize: 141,
-        weight: 561,
         locktime: 20,
         vin: [
           {
@@ -94,8 +92,6 @@ describe('Verus Util', () => {
         hash: '0c08692041da03c3bdbb834bf4fb544f9f4b9373ec1f37af8eade84c38d074fa',
         version: 2,
         size: 235,
-        vsize: 153,
-        weight: 610,
         locktime: 0,
         vin: [
           {
@@ -149,8 +145,6 @@ describe('Verus Util', () => {
         hash: '7dbfcd3a5c93ff371fe86c5e827ce97bb1d276ec38f6f0d09b387dc5a0e693b8',
         version: 2,
         size: 325,
-        vsize: 143,
-        weight: 571,
         locktime: 0,
         vin: [
           {

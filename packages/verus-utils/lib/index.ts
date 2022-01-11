@@ -1,6 +1,6 @@
 import { base58, padHexStart } from '@liquality/crypto'
 import { BitcoinNetworks, BitcoinNetwork } from '@liquality/bitcoin-networks'
-import { Address, Transaction, bitcoin as bT, TxStatus } from '@liquality/types'
+import { Address, Transaction, verus as vT, TxStatus } from '@liquality/types'
 import { addressToString } from '@liquality/utils'
 import { InvalidAddressError } from '@liquality/errors'
 
@@ -61,15 +61,15 @@ type CoinSelectTarget = {
 }
 
 type CoinSelectResponse = {
-  inputs: bT.UTXO[]
+  inputs: vT.UTXO[]
   outputs: CoinSelectTarget[]
   change: CoinSelectTarget
   fee: number
 }
 
-type CoinSelectFunction = (utxos: bT.UTXO[], targets: CoinSelectTarget[], feePerByte: number) => CoinSelectResponse
+type CoinSelectFunction = (utxos: vT.UTXO[], targets: CoinSelectTarget[], feePerByte: number) => CoinSelectResponse
 
-function selectCoins(utxos: bT.UTXO[], targets: CoinSelectTarget[], feePerByte: number, fixedInputs: bT.UTXO[] = []) {
+function selectCoins(utxos: vT.UTXO[], targets: CoinSelectTarget[], feePerByte: number, fixedInputs: vT.UTXO[] = []) {
   let selectUtxos = utxos
 
   // Default coinselect won't accumulate some inputs
@@ -98,11 +98,11 @@ const OUTPUT_TYPES_MAP = {
   [classify.types.P2WSH]: 'witness_v0_scripthash'
 }
 
-function decodeRawTransaction(hex: string, network: BitcoinNetwork): bT.Transaction {
+function decodeRawTransaction(hex: string, network: BitcoinNetwork): vT.Transaction {
   const bjsTx = bitcoin.Transaction.fromHex(hex)
 
   const vin = bjsTx.ins.map((input) => {
-    return <bT.Input>{
+    return <vT.Input>{
       txid: Buffer.from(input.hash).reverse().toString('hex'),
       vout: input.index,
       scriptSig: {
@@ -117,7 +117,7 @@ function decodeRawTransaction(hex: string, network: BitcoinNetwork): bT.Transact
   const vout = bjsTx.outs.map((output, n) => {
     const type = classify.output(output.script)
 
-    const vout: bT.Output = {
+    const vout: vT.Output = {
       value: output.value / 1e8,
       n,
       scriptPubKey: {
@@ -145,8 +145,6 @@ function decodeRawTransaction(hex: string, network: BitcoinNetwork): bT.Transact
     version: bjsTx.version,
     locktime: bjsTx.locktime,
     size: bjsTx.byteLength(),
-    vsize: bjsTx.virtualSize(),
-    weight: bjsTx.weight(),
     vin,
     vout,
     hex
@@ -154,21 +152,21 @@ function decodeRawTransaction(hex: string, network: BitcoinNetwork): bT.Transact
 }
 
 function normalizeTransactionObject(
-  tx: bT.Transaction,
+  tx: vT.Transaction,
   fee: number,
   block?: { number: number; hash: string }
-): Transaction<bT.Transaction> {
+): Transaction<vT.Transaction> {
   const value = tx.vout.reduce((p, n) => p.plus(new BigNumber(n.value).times(1e8)), new BigNumber(0))
   const result = {
     hash: tx.txid,
     value: value.toNumber(),
-    _raw: tx,
+    _raw: { ...tx, size: tx.hex.length / 2, hash: tx.txid },
     confirmations: 0,
     status: tx.confirmations > 0 ? TxStatus.Success : TxStatus.Pending
   }
 
   if (fee) {
-    const feePrice = Math.round(fee / tx.vsize)
+    const feePrice = Math.round(fee / tx.size)
     Object.assign(result, {
       fee,
       feePrice

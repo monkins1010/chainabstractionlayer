@@ -1,0 +1,47 @@
+{
+  "name": "@liquality/verus-js-wallet-provider",
+  "version": "1.11.2",
+  "description": "",
+  "module": "dist/index.js",
+  "main": "dist/index.js",
+  "types": "dist/lib/index.d.ts",
+  "directories": {
+    "dist": "dist",
+    "src": "lib"
+  },
+  "files": [
+    "dist",
+    "lib"
+  ],
+  "scripts": {
+    "build": "webpack --config ../../webpack/webpack.config.js"
+  },
+  "author": "Liquality <info@liquality.io>",
+  "license": "MIT",
+  "dependencies": {
+    "@babel/runtime": "^7.12.1",
+    "@liquality/verus-networks": "file:../verus-networks",
+    "@liquality/verus-utils": "file:../verus-utils",
+    "@liquality/verus-wallet-provider": "file:../verus-wallet-provider",
+    "@liquality/types": "file:../types",
+    "@liquality/utils": "file:../utils",
+    "@liquality/wallet-provider": "file:../wallet-provider",
+    "bip32": "^2.0.6",
+    "bip39": "^3.0.2",
+    "bitcoinjs-lib": "^5.2.0",
+    "bitcoinjs-message": "^2.1.0",
+    "@bitgo/utxo-lib": "https://github.com/miketout/BitGoJS.git#utxo-lib-verus"
+  },
+  "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/liquality/chainabstractionlayer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/liquality/chainabstractionlayer/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false
+}

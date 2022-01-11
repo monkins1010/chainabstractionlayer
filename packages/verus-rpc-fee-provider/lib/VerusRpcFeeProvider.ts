@@ -21,12 +21,12 @@ export default class VerusRpcFeeProvider extends Provider implements FeeProvider
   }
 
   getWaitTime(numBlocks: number) {
-    return numBlocks * 10 // Minutes per block* 60 // Seconds per minute
+    return numBlocks * 1 // Minutes per block* 60 // Seconds per minute
   }
 
   async getFee(targetBlocks: number): Promise<FeeDetail> {
     const value = await this.getMethod('getFeePerByte')(targetBlocks)
-    const wait = targetBlocks * 10 * 60 // 10 minute blocks in seconds
+    const wait = targetBlocks * 1 * 60 // 1 minute blocks in seconds
 
     return { fee: value, wait }
   }

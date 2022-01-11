@@ -1,6 +1,6 @@
 /// <reference types="node" />
 import { BitcoinNetwork } from '@liquality/bitcoin-networks';
-import { Address, Transaction, bitcoin as bT } from '@liquality/types';
+import { Address, Transaction, verus as vT } from '@liquality/types';
 declare const AddressTypes: string[];
 declare function calculateFee(numInputs: number, numOutputs: number, feePerByte: number): number;
 /**
@@ -20,17 +20,17 @@ declare type CoinSelectTarget = {
     script?: Buffer;
     id?: string;
 };
-declare function selectCoins(utxos: bT.UTXO[], targets: CoinSelectTarget[], feePerByte: number, fixedInputs?: bT.UTXO[]): {
-    inputs: bT.UTXO[];
+declare function selectCoins(utxos: vT.UTXO[], targets: CoinSelectTarget[], feePerByte: number, fixedInputs?: vT.UTXO[]): {
+    inputs: vT.UTXO[];
     outputs: CoinSelectTarget[];
     fee: number;
     change: CoinSelectTarget;
 };
-declare function decodeRawTransaction(hex: string, network: BitcoinNetwork): bT.Transaction;
-declare function normalizeTransactionObject(tx: bT.Transaction, fee: number, block?: {
+declare function decodeRawTransaction(hex: string, network: BitcoinNetwork): vT.Transaction;
+declare function normalizeTransactionObject(tx: vT.Transaction, fee: number, block?: {
     number: number;
     hash: string;
-}): Transaction<bT.Transaction>;
+}): Transaction<vT.Transaction>;
 declare function witnessStackToScriptWitness(witness: Buffer[]): Buffer;
 declare function getPubKeyHash(address: string, network: BitcoinNetwork): Buffer;
 declare function validateAddress(_address: Address | string, network: BitcoinNetwork): void;

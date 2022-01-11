@@ -1,9 +1,9 @@
 import { JsonRpcProvider } from '@liquality/jsonrpc-provider'
 import { addressToString } from '@liquality/utils'
-import { normalizeTransactionObject, decodeRawTransaction } from '@liquality/bitcoin-utils'
+import { normalizeTransactionObject, decodeRawTransaction } from '@liquality/verus-utils'
 import { TxNotFoundError, BlockNotFoundError } from '@liquality/errors'
 import { BitcoinNetwork } from '@liquality/bitcoin-networks'
-import { bitcoin, Transaction, Block, ChainProvider, SendOptions, Address, BigNumber } from '@liquality/types'
+import { verus, Transaction, Block, ChainProvider, SendOptions, Address, BigNumber } from '@liquality/types'
 
 import { flatten } from 'lodash'
 
@@ -37,16 +37,17 @@ export default class BitcoinRpcProvider extends JsonRpcProvider implements Parti
     this._usedAddressCache = {}
   }
 
-  async decodeRawTransaction(rawTransaction: string): Promise<bitcoin.Transaction> {
+  async decodeRawTransaction(rawTransaction: string): Promise<verus.Transaction> {
     return this.jsonrpc('decoderawtransaction', rawTransaction)
   }
 
   async getFeePerByte(numberOfBlocks = this._feeBlockConfirmations) {
     try {
-      const { feerate } = await this.jsonrpc('estimatesmartfee', numberOfBlocks)
+      const fee = await this.jsonrpc('estimatefee', numberOfBlocks)
 
-      if (feerate && feerate > 0) {
-        return Math.ceil((feerate * 1e8) / 1000)
+      if (fee && fee > 0) {
+        // Get satoshis per byte (* 100000000 / 1000)
+        return new BigNumber(fee).times(1e5).toNumber()
       }
 
       throw new Error('Invalid estimated fee')
@@ -68,21 +69,16 @@ export default class BitcoinRpcProvider extends JsonRpcProvider implements Parti
     return utxos.reduce((acc, utxo) => acc.plus(utxo.value), new BigNumber(0))
   }
 
-  async getUnspentTransactions(_addresses: (Address | string)[]): Promise<bitcoin.UTXO[]> {
+  async getUnspentTransactions(_addresses: (Address | string)[]): Promise<verus.UTXO[]> {
     const addresses = _addresses.map(addressToString)
-    const utxos: bitcoin.rpc.UTXO[] = await this.jsonrpc('listunspent', 0, 9999999, addresses)
+    const utxos: verus.rpc.UTXO[] = await this.jsonrpc('listunspent', 0, 9999999, addresses)
     return utxos.map((utxo) => ({ ...utxo, value: new BigNumber(utxo.amount).times(1e8).toNumber() }))
   }
 
   async getAddressTransactionCounts(_addresses: (Address | string)[]) {
     const addresses = _addresses.map(addressToString)
-    const receivedAddresses: bitcoin.rpc.ReceivedByAddress[] = await this.jsonrpc(
-      'listreceivedbyaddress',
-      0,
-      false,
-      true
-    )
-    return addresses.reduce((acc: bitcoin.AddressTxCounts, addr) => {
+    const receivedAddresses: verus.rpc.ReceivedByAddress[] = await this.jsonrpc('listreceivedbyaddress', 0, false, true)
+    return addresses.reduce((acc: verus.AddressTxCounts, addr) => {
       const receivedAddress = receivedAddresses.find((receivedAddress) => receivedAddress.address === addr)
       const transactionCount = receivedAddress ? receivedAddress.txids.length : 0
       acc[addr] = transactionCount
@@ -118,7 +114,7 @@ export default class BitcoinRpcProvider extends JsonRpcProvider implements Parti
   }
 
   async getBlockByHash(blockHash: string, includeTx = false): Promise<Block> {
-    let data: bitcoin.rpc.Block
+    let data: verus.rpc.Block
 
     try {
       data = await this.jsonrpc('getblock', blockHash) // TODO: This doesn't fit the interface?: https://chainquery.com/bitcoin-cli/getblock
@@ -134,7 +130,7 @@ export default class BitcoinRpcProvider extends JsonRpcProvider implements Parti
     const {
       hash,
       height: number,
-      mediantime: timestamp,
+      time: timestamp,
       difficulty,
       size,
       previousblockhash: parentHash,
@@ -196,7 +192,7 @@ export default class BitcoinRpcProvider extends JsonRpcProvider implements Parti
     }
   }
 
-  async getTransactionFee(tx: bitcoin.Transaction) {
+  async getTransactionFee(tx: verus.Transaction) {
     const isCoinbaseTx = tx.vin.find((vin) => vin.coinbase)
     if (isCoinbaseTx) return // Coinbase transactions do not have a fee
 
@@ -217,11 +213,8 @@ export default class BitcoinRpcProvider extends JsonRpcProvider implements Parti
     return feeValue.toNumber()
   }
 
-  async getParsedTransactionByHash(
-    transactionHash: string,
-    addFees = false
-  ): Promise<Transaction<bitcoin.Transaction>> {
-    const tx: bitcoin.rpc.MinedTransaction = await this.jsonrpc('getrawtransaction', transactionHash, 1)
+  async getParsedTransactionByHash(transactionHash: string, addFees = false): Promise<Transaction<verus.Transaction>> {
+    const tx: verus.rpc.MinedTransaction = await this.jsonrpc('getrawtransaction', transactionHash, 1)
     return normalizeTransactionObject(
       tx,
       addFees ? await this.getTransactionFee(tx) : undefined,
@@ -259,7 +252,7 @@ export default class BitcoinRpcProvider extends JsonRpcProvider implements Parti
     return this.jsonrpc('createrawtransaction', transactions, outputs)
   }
 
-  async fundRawTransaction(hexstring: string): Promise<bitcoin.rpc.FundRawResponse> {
+  async fundRawTransaction(hexstring: string): Promise<verus.rpc.FundRawResponse> {
     return this.jsonrpc('fundrawtransaction', hexstring)
   }
 }

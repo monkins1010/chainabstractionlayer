@@ -21,13 +21,13 @@ describe('Verus RPC Fee provider', () => {
     client = new Client()
     client.addProvider(
       new VerusRpcProvider({
-        uri: 'http://localhost:27486',
-        network: VerusNetworks.verus
+        uri: 'http://localhost:20656',
+        network: VerusNetworks.verus_testnet
       })
     )
     client.addProvider(new VerusRpcFeeProvider())
 
-    mockJsonRpc('http://localhost:27486', verusRpc, 100)
+    mockJsonRpc('http://localhost:20656', verusRpc, 100)
   })
 
   describe('getFees', () => {
@@ -35,13 +35,13 @@ describe('Verus RPC Fee provider', () => {
       const fees = await client.chain.getFees()
 
       expect(fees.slow.fee).to.equal(5)
-      expect(fees.slow.wait).to.equal(60 * MINUTE)
+      expect(fees.slow.wait).to.equal(6 * MINUTE)
 
       expect(fees.average.fee).to.equal(10)
-      expect(fees.average.wait).to.equal(30 * MINUTE)
+      expect(fees.average.wait).to.equal(3 * MINUTE)
 
       expect(fees.fast.fee).to.equal(20)
-      expect(fees.fast.wait).to.equal(10 * MINUTE)
+      expect(fees.fast.wait).to.equal(1 * MINUTE)
     })
   })
 })

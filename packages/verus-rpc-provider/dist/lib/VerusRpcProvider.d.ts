@@ -1,6 +1,6 @@
 import { JsonRpcProvider } from '@liquality/jsonrpc-provider';
 import { BitcoinNetwork } from '@liquality/bitcoin-networks';
-import { bitcoin, Transaction, Block, ChainProvider, SendOptions, Address, BigNumber } from '@liquality/types';
+import { verus, Transaction, Block, ChainProvider, SendOptions, Address, BigNumber } from '@liquality/types';
 interface ProviderOptions {
     uri: string;
     username?: string;
@@ -17,12 +17,12 @@ export default class BitcoinRpcProvider extends JsonRpcProvider implements Parti
         [key: string]: boolean;
     };
     constructor(options: ProviderOptions);
-    decodeRawTransaction(rawTransaction: string): Promise<bitcoin.Transaction>;
+    decodeRawTransaction(rawTransaction: string): Promise<verus.Transaction>;
     getFeePerByte(numberOfBlocks?: number): Promise<number>;
     getMinRelayFee(): Promise<number>;
     getBalance(_addresses: (string | Address)[]): Promise<BigNumber>;
-    getUnspentTransactions(_addresses: (Address | string)[]): Promise<bitcoin.UTXO[]>;
-    getAddressTransactionCounts(_addresses: (Address | string)[]): Promise<bitcoin.AddressTxCounts>;
+    getUnspentTransactions(_addresses: (Address | string)[]): Promise<verus.UTXO[]>;
+    getAddressTransactionCounts(_addresses: (Address | string)[]): Promise<verus.AddressTxCounts>;
     getReceivedByAddress(address: string): Promise<number>;
     importAddresses(addresses: string[]): Promise<any>;
     getTransactionHex(transactionHash: string): Promise<string>;
@@ -30,16 +30,16 @@ export default class BitcoinRpcProvider extends JsonRpcProvider implements Parti
     getBlockByHash(blockHash: string, includeTx?: boolean): Promise<Block>;
     getBlockByNumber(blockNumber: number, includeTx?: boolean): Promise<Block<any>>;
     getBlockHeight(): Promise<any>;
-    getTransactionByHash(transactionHash: string): Promise<Transaction<bitcoin.Transaction>>;
-    getTransactionFee(tx: bitcoin.Transaction): Promise<number>;
-    getParsedTransactionByHash(transactionHash: string, addFees?: boolean): Promise<Transaction<bitcoin.Transaction>>;
+    getTransactionByHash(transactionHash: string): Promise<Transaction<verus.Transaction>>;
+    getTransactionFee(tx: verus.Transaction): Promise<number>;
+    getParsedTransactionByHash(transactionHash: string, addFees?: boolean): Promise<Transaction<verus.Transaction>>;
     getRawTransactionByHash(transactionHash: string): Promise<string>;
     sendRawTransaction(rawTransaction: string): Promise<string>;
-    sendBatchTransaction(transactions: SendOptions[]): Promise<Transaction<bitcoin.Transaction>>;
+    sendBatchTransaction(transactions: SendOptions[]): Promise<Transaction<verus.Transaction>>;
     signRawTransaction(hexstring: string): Promise<any>;
     createRawTransaction(transactions: [], outputs: {
         [index: string]: number;
     }): Promise<string>;
-    fundRawTransaction(hexstring: string): Promise<bitcoin.rpc.FundRawResponse>;
+    fundRawTransaction(hexstring: string): Promise<verus.rpc.FundRawResponse>;
 }
 export {};

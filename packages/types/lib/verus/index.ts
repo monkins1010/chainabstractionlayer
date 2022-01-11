@@ -38,12 +38,11 @@ export interface Transaction {
   version: number
   locktime: number
   size: number
-  vsize: number
-  weight: number
   vin: Input[]
   vout: Output[]
   confirmations?: number
   hex: string
+  blockhash?: string
 }
 
 export interface UTXO {
