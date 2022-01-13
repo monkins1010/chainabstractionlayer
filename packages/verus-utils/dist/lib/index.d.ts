@@ -26,7 +26,7 @@ declare function selectCoins(utxos: vT.UTXO[], targets: CoinSelectTarget[], feeP
     fee: number;
     change: CoinSelectTarget;
 };
-declare function decodeRawTransaction(hex: string, network: BitcoinNetwork): vT.Transaction;
+declare function decodeRawTransaction(hex: string, network?: BitcoinNetwork): vT.Transaction;
 declare function normalizeTransactionObject(tx: vT.Transaction, fee: number, block?: {
     number: number;
     hash: string;

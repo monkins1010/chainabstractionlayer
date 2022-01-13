@@ -26,7 +26,7 @@
     "@liquality/types": "^1.11.2",
     "@liquality/utils": "^1.11.2",
     "@types/lodash": "^4.14.168",
-    "bignumber.js": "^9.0.0",
+    "bignumber.js": "9.0.2",
     "eip55": "^1.0.3",
     "lodash": "^4.17.20"
   },

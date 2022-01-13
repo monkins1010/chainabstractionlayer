@@ -27,7 +27,7 @@
     "@liquality/types": "^1.11.2",
     "@liquality/utils": "^1.11.2",
     "@types/node": "^14.14.36",
-    "bignumber.js": "^9.0.0",
+    "bignumber.js": "9.0.2",
     "bitcoinjs-lib": "^5.2.0"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",

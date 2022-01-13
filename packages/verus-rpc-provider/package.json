@@ -29,7 +29,7 @@
     "@liquality/provider": "file:../provider",
     "@liquality/types": "file:../types",
     "@liquality/utils": "file:../utils",
-    "bignumber.js": "^9.0.0",
+    "bignumber.js": "9.0.2",
     "lodash": "^4.17.20"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",

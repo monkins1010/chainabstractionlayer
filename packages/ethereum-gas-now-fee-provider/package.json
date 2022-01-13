@@ -22,7 +22,7 @@
     "@babel/runtime": "^7.12.1",
     "@liquality/node-provider": "^1.11.2",
     "@liquality/types": "^1.11.2",
-    "bignumber.js": "^9.0.0"
+    "bignumber.js": "9.0.2"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {

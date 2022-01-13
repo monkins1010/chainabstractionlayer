@@ -22,14 +22,14 @@ describe('Verus Swap provider', () => {
         provider
           .getSwapOutput({
             value: new BigNumber(1),
-            recipientAddress: 'tb1qwuv45ncnrmgaazjmzr8zxmcknvh43jagag3958',
-            refundAddress: 'tb1qwuv45ncnrmgaazjmzr8zxmcknvh43jagag3958',
+            recipientAddress: 'RJKtnkufwQ15ZMcCKVCYSezfZ3XQJAviTX',
+            refundAddress: 'RJKtnkufwQ15ZMcCKVCYSezfZ3XQJAviTX',
             secretHash: 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
             expiration: 1468194353
           })
           .toString('hex')
       ).to.equal(
-        '6382012088a820ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff8876a91477195a4f131ed1de8a5b10ce236f169b2f58cba8670431de8257b17576a91477195a4f131ed1de8a5b10ce236f169b2f58cba86888ac'
+        '6382012088a820ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff8876a914633bf2a72f1c29fdf3d03708c1828a11ef412f31670431de8257b17576a914633bf2a72f1c29fdf3d03708c1828a11ef412f316888ac'
       )
     })
 
@@ -38,14 +38,14 @@ describe('Verus Swap provider', () => {
         provider
           .getSwapOutput({
             value: new BigNumber(1),
-            recipientAddress: 'tb1qwuv45ncnrmgaazjmzr8zxmcknvh43jagag3958',
-            refundAddress: 'tb1qwuv45ncnrmgaazjmzr8zxmcknvh43jagag3958',
+            recipientAddress: 'RJKtnkufwQ15ZMcCKVCYSezfZ3XQJAviTX',
+            refundAddress: 'RJKtnkufwQ15ZMcCKVCYSezfZ3XQJAviTX',
             secretHash: 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
             expiration: 1468194353000
           })
           .toString('hex')
       ).to.equal(
-        '6382012088a820ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff8876a91477195a4f131ed1de8a5b10ce236f169b2f58cba8670568ef33d700b17576a91477195a4f131ed1de8a5b10ce236f169b2f58cba86888ac'
+        '6382012088a820ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff8876a914633bf2a72f1c29fdf3d03708c1828a11ef412f31670568ef33d700b17576a914633bf2a72f1c29fdf3d03708c1828a11ef412f316888ac'
       )
     })
   })
@@ -54,8 +54,8 @@ describe('Verus Swap provider', () => {
       return expect(() =>
         provider.getSwapOutput({
           value: new BigNumber(1),
-          recipientAddress: 'tb1qwuv45ncnrmgaazjmzr8zxmcknvh43jagag3958',
-          refundAddress: 'tb1qwuv45ncnrmgaazjmzr8zxmcknvh43jagag3958',
+          recipientAddress: 'RJKtnkufwQ15ZMcCKVCYSezfZ3XQJAviTX',
+          refundAddress: 'RJKtnkufwQ15ZMcCKVCYSezfZ3XQJAviTX',
           secretHash: 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
           expiration
         })
@@ -87,7 +87,7 @@ describe('Verus Swap provider', () => {
         provider.getSwapOutput({
           value: new BigNumber(1),
           recipientAddress,
-          refundAddress: 'tb1qwuv45ncnrmgaazjmzr8zxmcknvh43jagag3958',
+          refundAddress: 'RJKtnkufwQ15ZMcCKVCYSezfZ3XQJAviTX',
           secretHash: 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
           expiration: 1468194353
         })
@@ -100,7 +100,7 @@ describe('Verus Swap provider', () => {
       return expect(() =>
         provider.getSwapOutput({
           value: new BigNumber(1),
-          recipientAddress: 'tb1qwuv45ncnrmgaazjmzr8zxmcknvh43jagag3958',
+          recipientAddress: 'RJKtnkufwQ15ZMcCKVCYSezfZ3XQJAviTX',
           refundAddress,
           secretHash: 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
           expiration: 1468194353
@@ -116,14 +116,14 @@ describe('Verus Swap provider', () => {
     })
 
     it('should throw error with address wrong format', () => {
-      testRecipientAddress('tb1qwuv45ncnrmgaazjmzr8zxmcknvh43jagag3958wrong')
-      testRefundAddress('tb1qwuv45ncnrmgaazjmzr8zxmcknvh43jagag3958wrong')
+      testRecipientAddress('RJKtnkufwQ15ZMcCKVCYSezfZ3XQJAviTXwrong')
+      testRefundAddress('RJKtnkufwQ15ZMcCKVCYSezfZ3XQJAviTXwrong')
     })
 
-    it('should throw error with address wrong network', () => {
-      testRecipientAddress('bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq')
-      testRefundAddress('bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq')
-    })
+    // it('should throw error with address wrong network', () => {
+    //   testRecipientAddress('bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq')
+    //   testRefundAddress('bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq')
+    // })
   })
 
   describe('Swap contract secretHash validation', () => {
@@ -131,8 +131,8 @@ describe('Verus Swap provider', () => {
       return expect(() =>
         provider.getSwapOutput({
           value: new BigNumber(1),
-          recipientAddress: 'tb1qwuv45ncnrmgaazjmzr8zxmcknvh43jagag3958',
-          refundAddress: 'tb1qwuv45ncnrmgaazjmzr8zxmcknvh43jagag3958',
+          recipientAddress: 'RJKtnkufwQ15ZMcCKVCYSezfZ3XQJAviTX',
+          refundAddress: 'RJKtnkufwQ15ZMcCKVCYSezfZ3XQJAviTX',
           secretHash,
           expiration: 1468194353
         })

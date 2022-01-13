@@ -1,5 +1,6 @@
 import { BigNumber } from '../../packages/types/lib'
 import { BitcoinNetworks } from '../../packages/bitcoin-networks/lib'
+import { VerusNetworks } from '../../packages/verus-networks/lib'
 import { EthereumNetworks } from '../../packages/ethereum-networks/lib'
 import { NearNetworks } from '../../packages/near-networks/lib'
 import { TerraNetworks } from '../../packages/terra-networks/lib'
@@ -15,6 +16,20 @@ export default {
     network: BitcoinNetworks.bitcoin_regtest,
     value: new BigNumber(1000000),
     mineBlocks: true,
+
+    // Wallet Import Format, 52 characters long
+    // starts with c on testnet, L or K or mainnet
+    privKeyRx: /^[cLK]\w{51}$/
+  },
+  verus: {
+    rpc: {
+      host: 'http://localhost:20656',
+      username: 'verus',
+      password: 'local321'
+    },
+    network: VerusNetworks.verus_testnet,
+    value: new BigNumber(1000000),
+    mineBlocks: false,
 
     // Wallet Import Format, 52 characters long
     // starts with c on testnet, L or K or mainnet

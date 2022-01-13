@@ -14,6 +14,10 @@ import { BitcoinNodeWalletProvider } from '../../packages/bitcoin-node-wallet-pr
 import { BitcoinJsWalletProvider } from '../../packages/bitcoin-js-wallet-provider/lib'
 import { BitcoinRpcProvider } from '../../packages/bitcoin-rpc-provider/lib'
 import * as BitcoinUtils from '../../packages/bitcoin-utils/lib'
+import { VerusRpcProvider } from '../../packages/verus-rpc-provider/lib'
+import { VerusJsWalletProvider } from '../../packages/verus-js-wallet-provider/lib'
+import { VerusNodeWalletProvider } from '../../packages/verus-node-wallet-provider/lib'
+import { VerusSwapProvider } from '../../packages/verus-swap-provider/lib'
 import { EthereumRpcProvider } from '../../packages/ethereum-rpc-provider/lib'
 import { EthereumWalletApiProvider } from '../../packages/ethereum-wallet-api-provider/lib'
 import { EthereumSwapProvider } from '../../packages/ethereum-swap-provider/lib'
@@ -50,6 +54,8 @@ const CONSTANTS = {
   BITCOIN_ADDRESS_DEFAULT_BALANCE: new BigNumber(10 * 1e8),
   ETHEREUM_ADDRESS_DEFAULT_BALANCE: new BigNumber(10 * 1e18),
   ETHEREUM_NON_EXISTING_CONTRACT: '0000000000000000000000000000000000000000',
+  VERUS_FEE_PER_BYTE: 3,
+  VERUS_ADDRESS_DEFAULT_BALANCE: new BigNumber(10 * 1e8),
   GWEI: 1e9
 }
 
@@ -69,6 +75,18 @@ function mockedBitcoinRpcProvider() {
   // Mock Fee Per Byte to prevent from changing
   bitcoinRpcProvider.getFeePerByte = async () => CONSTANTS.BITCOIN_FEE_PER_BYTE
   return bitcoinRpcProvider
+}
+
+function mockedVerusRpcProvider() {
+  const verusRpcProvider = new VerusRpcProvider({
+    network: config.verus.network,
+    uri: config.verus.rpc.host,
+    username: config.verus.rpc.username,
+    password: config.verus.rpc.password
+  })
+  // Mock Fee Per Byte to prevent from changing
+  verusRpcProvider.getFeePerByte = async () => CONSTANTS.VERUS_FEE_PER_BYTE
+  return verusRpcProvider
 }
 
 const bitcoinWithLedger = new Client()
@@ -104,6 +122,29 @@ bitcoinWithJs.addProvider(
   })
 )
 bitcoinWithJs.addProvider(new BitcoinSwapProvider({ network: config.bitcoin.network }))
+
+const verusWithJs = new Client()
+verusWithJs.addProvider(mockedVerusRpcProvider())
+verusWithJs.addProvider(
+  new VerusJsWalletProvider({
+    network: config.verus.network,
+    mnemonic: generateMnemonic(256),
+    baseDerivationPath: `m/84'/${config.verus.network.coinType}'/0'`
+  })
+)
+verusWithJs.addProvider(new VerusSwapProvider({ network: config.verus.network }))
+
+const verusWithNode = new Client()
+verusWithNode.addProvider(mockedVerusRpcProvider())
+verusWithNode.addProvider(
+  new VerusNodeWalletProvider({
+    network: config.verus.network,
+    uri: config.verus.rpc.host,
+    username: config.verus.rpc.username,
+    password: config.verus.rpc.password
+  })
+)
+verusWithNode.addProvider(new VerusSwapProvider({ network: config.verus.network }))
 
 const ethereumWithMetaMask = new Client()
 ethereumWithMetaMask.addProvider(new EthereumRpcProvider({ uri: config.ethereum.rpc.host }))
@@ -239,6 +280,13 @@ const chains: { [index: string]: Chain } = {
     segwitFeeImplemented: true
   },
   bitcoinWithJs: { id: 'Bitcoin Js', name: 'bitcoin', client: bitcoinWithJs, network: config.bitcoin.network },
+  verusWithJs: { id: 'Verus Js', name: 'verus', client: verusWithJs, network: config.verus.network },
+  verusWithNode: {
+    id: 'Verus Node',
+    name: 'verus',
+    client: verusWithNode,
+    network: config.verus.network
+  },
   ethereumWithMetaMask: { id: 'Ethereum MetaMask', name: 'ethereum', client: ethereumWithMetaMask },
   ethereumWithNode: { id: 'Ethereum Node', name: 'ethereum', client: ethereumWithNode },
   ethereumWithLedger: { id: 'Ethereum Ledger', name: 'ethereum', client: ethereumWithLedger },
@@ -276,6 +324,14 @@ async function fundAddress(chain: Chain, address: string, value?: BigNumber): Pr
   switch (chain.name) {
     case 'bitcoin': {
       tx = await chains.bitcoinWithNode.client.chain.sendTransaction({
+        to: address,
+        value: value || CONSTANTS.BITCOIN_ADDRESS_DEFAULT_BALANCE
+      })
+      break
+    }
+
+    case 'verus': {
+      tx = await chains.verusWithNode.client.chain.sendTransaction({
         to: address,
         value: value || CONSTANTS.BITCOIN_ADDRESS_DEFAULT_BALANCE
       })

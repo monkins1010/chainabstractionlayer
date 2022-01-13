@@ -21,7 +21,8 @@
   "dependencies": {
     "@babel/runtime": "^7.12.1",
     "@liquality/types": "file:../types",
-    "bitcoinjs-lib": "^5.2.0"
+    "bitcoinjs-lib": "^5.2.0",
+    "@bitgo/utxo-lib": "https://github.com/miketout/BitGoJS.git#utxo-lib-verus"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {

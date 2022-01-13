@@ -12,6 +12,8 @@ import * as varuint from 'bip174/src/lib/converter/varint'
 import coinselect from 'coinselect'
 import coinselectAccumulative from 'coinselect/accumulative'
 
+const verus = require('@bitgo/utxo-lib') // eslint-disable-line
+
 const AddressTypes = ['legacy', 'p2sh-segwit', 'bech32']
 
 function calculateFee(numInputs: number, numOutputs: number, feePerByte: number) {
@@ -98,53 +100,63 @@ const OUTPUT_TYPES_MAP = {
   [classify.types.P2WSH]: 'witness_v0_scripthash'
 }
 
-function decodeRawTransaction(hex: string, network: BitcoinNetwork): vT.Transaction {
-  const bjsTx = bitcoin.Transaction.fromHex(hex)
+function decodeRawTransaction(hex: string, network: BitcoinNetwork = verus.networks.verus): vT.Transaction {
+  const vBitgoTx = verus.Transaction.fromHex(hex, network)
 
-  const vin = bjsTx.ins.map((input) => {
-    return <vT.Input>{
-      txid: Buffer.from(input.hash).reverse().toString('hex'),
-      vout: input.index,
-      scriptSig: {
-        asm: bitcoin.script.toASM(input.script),
-        hex: input.script.toString('hex')
-      },
-      txinwitness: input.witness.map((w) => w.toString('hex')),
-      sequence: input.sequence
-    }
-  })
-
-  const vout = bjsTx.outs.map((output, n) => {
-    const type = classify.output(output.script)
-
-    const vout: vT.Output = {
-      value: output.value / 1e8,
-      n,
-      scriptPubKey: {
-        asm: bitcoin.script.toASM(output.script),
-        hex: output.script.toString('hex'),
-        reqSigs: 1, // TODO: not sure how to derive this
-        type: OUTPUT_TYPES_MAP[type] || type,
-        addresses: []
+  const vin = vBitgoTx.ins.map(
+    (input: { hash: Buffer; index: number; script: Buffer; sequence: number; witness: Buffer[] }) => {
+      return <vT.Input>{
+        txid: Buffer.from(input.hash).reverse().toString('hex'),
+        vout: input.index,
+        scriptSig: {
+          asm: verus.script.toASM(input.script),
+          hex: input.script.toString('hex')
+        },
+        txinwitness: input.witness.map((w) => w.toString('hex')),
+        sequence: input.sequence
       }
     }
+  )
 
-    try {
-      const address = bitcoin.address.fromOutputScript(output.script, network)
-      vout.scriptPubKey.addresses.push(address)
-    } catch (e) {
-      /** If output script is not parasable, we just skip it */
+  const vout = vBitgoTx.outs.map(
+    (
+      output: {
+        script: Buffer
+        value: number
+      },
+      n: number
+    ) => {
+      const type = classify.output(output.script)
+
+      const vout: vT.Output = {
+        value: output.value / 1e8,
+        n,
+        scriptPubKey: {
+          asm: verus.script.toASM(output.script),
+          hex: output.script.toString('hex'),
+          reqSigs: 1, // TODO: not sure how to derive this
+          type: OUTPUT_TYPES_MAP[type] || type,
+          addresses: []
+        }
+      }
+
+      try {
+        const address = verus.address.fromOutputScript(output.script, network)
+        vout.scriptPubKey.addresses.push(address)
+      } catch (e) {
+        /** If output script is not parasable, we just skip it */
+      }
+
+      return vout
     }
-
-    return vout
-  })
+  )
 
   return {
-    txid: bjsTx.getHash(false).reverse().toString('hex'),
-    hash: bjsTx.getHash(true).reverse().toString('hex'),
-    version: bjsTx.version,
-    locktime: bjsTx.locktime,
-    size: bjsTx.byteLength(),
+    txid: vBitgoTx.getId(),
+    hash: vBitgoTx.getId(),
+    version: vBitgoTx.version,
+    locktime: vBitgoTx.locktime,
+    size: vBitgoTx.byteLength(),
     vin,
     vout,
     hex

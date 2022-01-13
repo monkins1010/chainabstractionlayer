@@ -25,7 +25,7 @@
     "@liquality/types": "^1.11.2",
     "@liquality/utils": "^1.11.2",
     "@liquality/wallet-provider": "^1.11.2",
-    "bignumber.js": "^9.0.0",
+    "bignumber.js": "9.0.2",
     "bip39": "^3.0.2",
     "ethereumjs-common": "^1.4.0",
     "ethereumjs-tx": "^2.1.1",

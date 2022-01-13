@@ -1,18 +1,19 @@
-import { networks, Network as VerusJsLibNetwork } from 'bitcoinjs-lib'
+import { Network as VerusJsLibNetwork } from 'bitcoinjs-lib'
 import { Network } from '@liquality/types'
+const bitgo = require('@bitgo/utxo-lib') // eslint-disable-line
 
 export interface VerusNetwork extends Network, VerusJsLibNetwork {}
 
 const verus: VerusNetwork = {
   name: 'verus',
-  ...networks.bitcoin,
+  ...bitgo.networks.verus,
   coinType: '0',
   isTestnet: false
 }
 
 const verus_testnet: VerusNetwork = {
   name: 'verus_testnet',
-  ...networks.testnet,
+  ...bitgo.networks.verus,
   coinType: '1',
   isTestnet: true
 }

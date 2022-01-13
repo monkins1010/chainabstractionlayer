@@ -19,7 +19,7 @@
   "author": "Liquality <info@liquality.io>",
   "license": "MIT",
   "dependencies": {
-    "bignumber.js": "^9.0.1"
+    "bignumber.js": "9.0.2"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {
