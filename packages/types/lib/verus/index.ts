@@ -67,6 +67,8 @@ export enum SwapMode {
 
 export type AddressTxCounts = { [index: string]: number }
 
+export type AddressDeltas = { [index: string]: Array<rpc.AddressDelta> }
+
 export interface PsbtInputTarget {
   index: number
   derivationPath: string

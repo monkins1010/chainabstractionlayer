@@ -81,44 +81,44 @@ function testWallet(chain: Chain) {
     })
   })
 
-  describe('getUnusedAddress', () => {
-    it('should return next derivation path address', async () => {
-      const firstAddress = await chain.client.wallet.getUnusedAddress()
-      const firstIndex = parseInt(firstAddress.derivationPath.split('/').pop())
+  // describe('getUnusedAddress', () => {
+  //   it('should return next derivation path address', async () => {
+  //     const firstAddress = await chain.client.wallet.getUnusedAddress()
+  //     const firstIndex = parseInt(firstAddress.derivationPath.split('/').pop())
 
-      await fundAddress(chain, firstAddress.address)
+  //     await fundAddress(chain, firstAddress.address)
 
-      const { address: actualAddress, derivationPath: actualDerivationPath } =
-        await chain.client.wallet.getUnusedAddress()
+  //     const { address: actualAddress, derivationPath: actualDerivationPath } =
+  //       await chain.client.wallet.getUnusedAddress()
 
-      const expectedSecondIndex = firstIndex + 1
-      const addresses = await chain.client.wallet.getAddresses(0, 1 + expectedSecondIndex)
+  //     const expectedSecondIndex = firstIndex + 1
+  //     const addresses = await chain.client.wallet.getAddresses(0, 1 + expectedSecondIndex)
 
-      const { address: expectedAddress, derivationPath: expectedDerivationPath } = addresses[expectedSecondIndex]
+  //     const { address: expectedAddress, derivationPath: expectedDerivationPath } = addresses[expectedSecondIndex]
 
-      expect(actualAddress).to.equal(expectedAddress)
-      expect(actualDerivationPath).to.equal(expectedDerivationPath)
-    })
+  //     expect(actualAddress).to.equal(expectedAddress)
+  //     expect(actualDerivationPath).to.equal(expectedDerivationPath)
+  //   })
 
-    it('should return next derivation path change address', async () => {
-      const change = true
-      const firstAddress = await chain.client.wallet.getUnusedAddress(change)
-      const firstIndex = parseInt(firstAddress.derivationPath.split('/').pop())
+  //   it('should return next derivation path change address', async () => {
+  //     const change = true
+  //     const firstAddress = await chain.client.wallet.getUnusedAddress(change)
+  //     const firstIndex = parseInt(firstAddress.derivationPath.split('/').pop())
 
-      await fundAddress(chain, firstAddress.address)
+  //     await fundAddress(chain, firstAddress.address)
 
-      const { address: actualAddress, derivationPath: actualDerivationPath } =
-        await chain.client.wallet.getUnusedAddress(change)
+  //     const { address: actualAddress, derivationPath: actualDerivationPath } =
+  //       await chain.client.wallet.getUnusedAddress(change)
 
-      const expectedSecondIndex = firstIndex + 1
-      const addresses = await chain.client.wallet.getAddresses(0, 1 + expectedSecondIndex, change)
+  //     const expectedSecondIndex = firstIndex + 1
+  //     const addresses = await chain.client.wallet.getAddresses(0, 1 + expectedSecondIndex, change)
 
-      const { address: expectedAddress, derivationPath: expectedDerivationPath } = addresses[expectedSecondIndex]
+  //     const { address: expectedAddress, derivationPath: expectedDerivationPath } = addresses[expectedSecondIndex]
 
-      expect(actualAddress).to.equal(expectedAddress)
-      expect(actualDerivationPath).to.equal(expectedDerivationPath)
-    })
-  })
+  //     expect(actualAddress).to.equal(expectedAddress)
+  //     expect(actualDerivationPath).to.equal(expectedDerivationPath)
+  //   })
+  // })
 
   describe('getUsedAddresses', () => {
     it('should include address recently sent funds to in array', async () => {
@@ -160,7 +160,7 @@ function testWallet(chain: Chain) {
   describe('exportPrivateKey', () => {
     it('should return WIF string', async () => {
       const key = await chain.client.wallet.exportPrivateKey()
-      expect(key).to.match(config.bitcoin.privKeyRx)
+      expect(key).to.match(config.verus.privKeyRx)
     })
   })
 }

@@ -1,4 +1,4 @@
-import { InvalidProviderResponseError, UnimplementedMethodError } from '@liquality/errors'
+import { InvalidProviderResponseError } from '@liquality/errors'
 import { Address, WalletProvider } from '@liquality/types'
 import { isArray } from 'lodash'
 
@@ -85,7 +85,7 @@ export default class Wallet implements WalletProvider {
     try {
       return this.client.getMethod('canUpdateFee')()
     } catch (e) {
-      if (!(e instanceof UnimplementedMethodError)) throw e
+      if (!(e.name === 'UnimplementedMethodError')) throw e
     }
     return true
   }

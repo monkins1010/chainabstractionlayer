@@ -4,8 +4,10 @@ import { verus, Transaction, Address, BigNumber, SendOptions, ChainProvider, Wal
 import { asyncSetImmediate, addressToString } from '@liquality/utils'
 import { Provider } from '@liquality/provider'
 import { InsufficientBalanceError } from '@liquality/errors'
-import { BIP32Interface, payments, script } from 'bitcoinjs-lib'
+import { BIP32Interface, script } from 'bitcoinjs-lib'
 import memoize from 'memoizee'
+
+const bitgo = require('@bitgo/utxo-lib') // eslint-disable-line
 
 const ADDRESS_GAP = 20
 
@@ -183,20 +185,7 @@ export default <T extends Constructor<Provider>>(superclass: T) => {
     }
 
     getAddressFromPublicKey(publicKey: Buffer) {
-      return this.getPaymentVariantFromPublicKey(publicKey).address
-    }
-
-    getPaymentVariantFromPublicKey(publicKey: Buffer) {
-      if (this._addressType === verus.AddressType.LEGACY) {
-        return payments.p2pkh({ pubkey: publicKey, network: this._network })
-      } else if (this._addressType === verus.AddressType.P2SH_SEGWIT) {
-        return payments.p2sh({
-          redeem: payments.p2wpkh({ pubkey: publicKey, network: this._network }),
-          network: this._network
-        })
-      } else if (this._addressType === verus.AddressType.BECH32) {
-        return payments.p2wpkh({ pubkey: publicKey, network: this._network })
-      }
+      return bitgo.ECPair.fromPublicKeyBuffer(publicKey, this._network).getAddress()
     }
 
     async importAddresses() {
@@ -286,10 +275,10 @@ export default <T extends Constructor<Provider>>(superclass: T) => {
           addrList = addrList.concat(externalAddresses)
         }
 
-        const transactionCounts: verus.AddressTxCounts = await this.getMethod('getAddressTransactionCounts')(addrList)
+        const addressDeltas: verus.AddressDeltas = await this.getMethod('getAddressDeltas')(addrList)
 
         for (const address of addrList) {
-          const isUsed = transactionCounts[address.address] > 0
+          const isUsed = addressDeltas[address.address].length > 0
           const isChangeAddress = changeAddresses.find((a) => address.address === a.address)
           const key = isChangeAddress ? 'change' : 'external'
 
@@ -333,13 +322,13 @@ export default <T extends Constructor<Provider>>(superclass: T) => {
       const originalGetMethod = this.getMethod
       const memoizedGetFeePerByte = memoize(this.getMethod('getFeePerByte'), { primitive: true })
       const memoizedGetUnspentTransactions = memoize(this.getMethod('getUnspentTransactions'), { primitive: true })
-      const memoizedGetAddressTransactionCounts = memoize(this.getMethod('getAddressTransactionCounts'), {
+      const memoizedGetAddressDeltas = memoize(this.getMethod('getAddressDeltas'), {
         primitive: true
       })
       this.getMethod = (method: string, requestor: any = this) => {
         if (method === 'getFeePerByte') return memoizedGetFeePerByte
         if (method === 'getUnspentTransactions') return memoizedGetUnspentTransactions
-        else if (method === 'getAddressTransactionCounts') return memoizedGetAddressTransactionCounts
+        else if (method === 'getAddressDeltas') return memoizedGetAddressDeltas
         else return originalGetMethod.bind(this)(method, requestor)
       }
 
@@ -444,7 +433,7 @@ export default <T extends Constructor<Provider>>(superclass: T) => {
 
         const utxoBalance = utxos.reduce((a, b) => a + (b.value || 0), 0)
 
-        const transactionCounts: verus.AddressTxCounts = await this.getMethod('getAddressTransactionCounts')(addrList)
+        const addressDeltas: verus.AddressDeltas = await this.getMethod('getAddressDeltas')(addrList)
 
         if (!feePerByte) feePerByte = await feePerBytePromise
         const minRelayFee = await this.getMethod('getMinRelayFee')()
@@ -486,7 +475,7 @@ export default <T extends Constructor<Provider>>(superclass: T) => {
         }
 
         for (const address of addrList) {
-          const isUsed = transactionCounts[address.address]
+          const isUsed = addressDeltas[address.address].length > 0
           const isChangeAddress = changeAddresses.find((a) => address.address === a.address)
           const key = isChangeAddress ? 'change' : 'nonChange'
 

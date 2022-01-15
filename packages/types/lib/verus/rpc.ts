@@ -58,6 +58,15 @@ export interface ReceivedByAddress {
   txids: string[]
 }
 
+export interface AddressDelta {
+  satoshis: number
+  txid: string
+  index: number
+  blockindex: number
+  height: number
+  address: string
+}
+
 export interface Block {
   hash: string
   confirmations: number

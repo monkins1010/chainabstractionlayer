@@ -6,7 +6,6 @@ import MetaMaskConnector from 'node-metamask'
 import LedgerHwTransportNode from '@ledgerhq/hw-transport-node-hid'
 import { Client } from '../../packages/client/lib'
 import * as crypto from '../../packages/crypto/lib'
-import * as errors from '../../packages/errors/lib'
 import * as utils from '../../packages/utils/lib'
 import { BitcoinLedgerProvider } from '../../packages/bitcoin-ledger-provider/lib'
 import { BitcoinSwapProvider } from '../../packages/bitcoin-swap-provider/lib'
@@ -514,7 +513,7 @@ async function mineBlock(chain: Chain, blocks = 1) {
   try {
     await chain.client.chain.generateBlock(blocks)
   } catch (e) {
-    if (!(e instanceof errors.UnimplementedMethodError)) throw e
+    if (!(e.name === 'UnimplementedMethodError')) throw e
     console.log('Skipped mining block - not implement for chain - probably client automines')
   }
 }

@@ -86,6 +86,23 @@ export default class BitcoinRpcProvider extends JsonRpcProvider implements Parti
     }, {})
   }
 
+  async getAddressDeltas(_addresses: (Address | string)[]) {
+    const addresses = _addresses.map(addressToString)
+    const addressDeltas: verus.rpc.AddressDelta[] = await this.jsonrpc('getaddressdeltas', { addresses })
+    const deltasFormatted: verus.AddressDeltas = {}
+
+    for (const address of addresses) {
+      deltasFormatted[address] = []
+    }
+
+    for (const delta of addressDeltas) {
+      if (deltasFormatted[delta.address]) deltasFormatted[delta.address].push(delta)
+      else deltasFormatted[delta.address] = [delta]
+    }
+
+    return deltasFormatted
+  }
+
   async getReceivedByAddress(address: string): Promise<number> {
     return this.jsonrpc('getreceivedbyaddress', address)
   }
@@ -99,18 +116,32 @@ export default class BitcoinRpcProvider extends JsonRpcProvider implements Parti
     return this.jsonrpc('getrawtransaction', transactionHash)
   }
 
-  async generateBlock(numberOfBlocks: number) {
-    const miningAddressLabel = 'miningAddress'
-    let address
-    try {
-      // Avoid creating 100s of addresses for mining
-      const labelAddresses = await this.jsonrpc('getaddressesbylabel', miningAddressLabel)
-      address = Object.keys(labelAddresses)[0]
-    } catch (e) {
-      // Label does not exist
-      address = await this.jsonrpc('getnewaddress', miningAddressLabel)
-    }
-    return this.jsonrpc('generatetoaddress', numberOfBlocks, address)
+  async generateBlock(numberOfBlocks: number): Promise<void> {
+    let lastLongest = -1
+    let blocksPassed = 0
+
+    return new Promise((resolve, reject) => {
+      // Actually waits for new block(s)
+      const infoInterval = setInterval(async () => {
+        try {
+          const { longestchain } = await this.jsonrpc('getinfo')
+
+          if (lastLongest === -1) lastLongest = longestchain
+          else if (longestchain > lastLongest) {
+            blocksPassed += longestchain - lastLongest
+            lastLongest = longestchain
+          }
+
+          if (blocksPassed >= numberOfBlocks) {
+            clearInterval(infoInterval)
+            resolve(null)
+          }
+        } catch (e) {
+          clearInterval(infoInterval)
+          reject(e)
+        }
+      }, 1000)
+    })
   }
 
   async getBlockByHash(blockHash: string, includeTx = false): Promise<Block> {

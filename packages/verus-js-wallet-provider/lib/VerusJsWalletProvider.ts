@@ -85,32 +85,15 @@ export default class VerusJsWalletProvider extends VerusWalletProvider(WalletPro
 
     const psbt = new Psbt({ network })
 
-    const needsWitness = [verus.AddressType.BECH32, verus.AddressType.P2SH_SEGWIT].includes(this._addressType)
-
     for (let i = 0; i < inputs.length; i++) {
-      const wallet = await this.getWalletAddress(inputs[i].address)
-      const keyPair = await this.keyPair(wallet.derivationPath)
-      const paymentVariant = this.getPaymentVariantFromPublicKey(keyPair.publicKey)
-
       const psbtInput: any = {
         hash: inputs[i].txid,
         index: inputs[i].vout,
         sequence: 0
       }
 
-      if (needsWitness) {
-        psbtInput.witnessUtxo = {
-          script: paymentVariant.output,
-          value: inputs[i].value
-        }
-      } else {
-        const inputTxRaw = await this.getMethod('getRawTransaction')(inputs[i].txid)
-        psbtInput.nonWitnessUtxo = Buffer.from(inputTxRaw, 'hex')
-      }
-
-      if (this._addressType === verus.AddressType.P2SH_SEGWIT) {
-        psbtInput.redeemScript = paymentVariant.redeem.output
-      }
+      const inputTxRaw = await this.getMethod('getRawTransaction')(inputs[i].txid)
+      psbtInput.nonWitnessUtxo = Buffer.from(inputTxRaw, 'hex')
 
       psbt.addInput(psbtInput)
     }

@@ -33,7 +33,7 @@ export default {
 
     // Wallet Import Format, 52 characters long
     // starts with c on testnet, L or K or mainnet
-    privKeyRx: /^[cLK]\w{51}$/
+    privKeyRx: /^[U]\w{51}$/
   },
   ethereum: {
     rpc: {

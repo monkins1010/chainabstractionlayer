@@ -23,10 +23,11 @@ export default class BitcoinRpcProvider extends JsonRpcProvider implements Parti
     getBalance(_addresses: (string | Address)[]): Promise<BigNumber>;
     getUnspentTransactions(_addresses: (Address | string)[]): Promise<verus.UTXO[]>;
     getAddressTransactionCounts(_addresses: (Address | string)[]): Promise<verus.AddressTxCounts>;
+    getAddressDeltas(_addresses: (Address | string)[]): Promise<verus.AddressDeltas>;
     getReceivedByAddress(address: string): Promise<number>;
     importAddresses(addresses: string[]): Promise<any>;
     getTransactionHex(transactionHash: string): Promise<string>;
-    generateBlock(numberOfBlocks: number): Promise<any>;
+    generateBlock(numberOfBlocks: number): Promise<void>;
     getBlockByHash(blockHash: string, includeTx?: boolean): Promise<Block>;
     getBlockByNumber(blockNumber: number, includeTx?: boolean): Promise<Block<any>>;
     getBlockHeight(): Promise<any>;

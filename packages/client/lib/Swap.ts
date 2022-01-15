@@ -1,5 +1,4 @@
 import { sha256 } from '@liquality/crypto'
-import { UnimplementedMethodError } from '@liquality/errors'
 import { SwapParams, SwapProvider, Transaction } from '@liquality/types'
 
 export default class Swap implements SwapProvider {
@@ -46,7 +45,7 @@ export default class Swap implements SwapProvider {
     try {
       return this.client.getMethod('generateSecret')(message)
     } catch (e) {
-      if (!(e instanceof UnimplementedMethodError)) throw e
+      if (!(e.name === 'UnimplementedMethodError')) throw e
     }
     const address = (await this.client.getMethod('getAddresses')())[0]
     const signedMessage = await this.client.getMethod('signMessage')(message, address.address)
@@ -99,7 +98,7 @@ export default class Swap implements SwapProvider {
     try {
       return this.client.getMethod('doesBlockScan')()
     } catch (e) {
-      if (!(e instanceof UnimplementedMethodError)) throw e
+      if (!(e.name === 'UnimplementedMethodError')) throw e
     }
     return true
   }

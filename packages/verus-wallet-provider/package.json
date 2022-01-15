@@ -28,7 +28,8 @@
     "@liquality/utils": "file:../utils",
     "bignumber.js": "9.0.2",
     "bitcoinjs-lib": "^5.2.0",
-    "memoizee": "^0.4.15"
+    "memoizee": "^0.4.15",
+    "@bitgo/utxo-lib": "https://github.com/miketout/BitGoJS.git#utxo-lib-verus"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {
