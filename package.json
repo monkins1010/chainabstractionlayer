@@ -57,7 +57,8 @@
     "webpack": "^5.31.0",
     "webpack-bundle-analyzer": "^4.4.0",
     "webpack-cli": "^4.6.0",
-    "webpack-node-externals": "^2.5.2"
+    "webpack-node-externals": "^2.5.2",
+    "@bitgo/utxo-lib": "https://github.com/miketout/BitGoJS.git#utxo-lib-verus"
   },
   "scripts": {
     "split-verus-modules": "git subtree split --squash --prefix=packages/verus-networks -b verus-networks && git subtree split --squash --prefix=packages/verus-rpc-provider -b verus-rpc-provider && git subtree split --squash --prefix=packages/verus-rpc-fee-provider -b verus-rpc-fee-provider && git subtree split --squash --prefix=packages/verus-swap-provider -b verus-swap-provider && git subtree split --squash --prefix=packages/verus-utils -b verus-utils && git subtree split --squash --prefix=packages/types -b verus-types",

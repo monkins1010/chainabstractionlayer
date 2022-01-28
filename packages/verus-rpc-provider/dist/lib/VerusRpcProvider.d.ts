@@ -22,7 +22,6 @@ export default class BitcoinRpcProvider extends JsonRpcProvider implements Parti
     getMinRelayFee(): Promise<number>;
     getBalance(_addresses: (string | Address)[]): Promise<BigNumber>;
     getUnspentTransactions(_addresses: (Address | string)[]): Promise<verus.UTXO[]>;
-    getAddressTransactionCounts(_addresses: (Address | string)[]): Promise<verus.AddressTxCounts>;
     getAddressDeltas(_addresses: (Address | string)[]): Promise<verus.AddressDeltas>;
     getReceivedByAddress(address: string): Promise<number>;
     importAddresses(addresses: string[]): Promise<any>;

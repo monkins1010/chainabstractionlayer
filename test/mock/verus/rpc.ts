@@ -489,6 +489,25 @@ export default {
       ]
     }
   ],
+  getaddressutxos: [
+    {
+      params: [{ addresses: ['RKrdSQgg4jcDfuKKwJpwJPLHMbqksg3kDe'], chainInfo: true }],
+      result: {
+        utxos: [
+          {
+            address: 'RKrdSQgg4jcDfuKKwJpwJPLHMbqksg3kDe',
+            txid: '28e8bbd2547f4a71bc1ce09898a5f33f38c90e8b0a626f06086e768212f74424',
+            outputIndex: 2,
+            script: '76a9147404277b703ce120135dc9c13afef1c2adf1a0df88ac',
+            satoshis: 366999680000,
+            height: 52314
+          }
+        ],
+        hash: '6429242d05d4d83fca187cd1b5568d75b9d5374f73df59dd0545886c6907ccbc',
+        height: 104211
+      }
+    }
+  ],
   getnewaddress: [
     {
       params: [],

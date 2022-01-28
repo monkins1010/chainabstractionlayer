@@ -198,7 +198,7 @@ describe('Verus RPC provider', () => {
     it('should return correct balance in sats', async () => {
       const balance = await provider.getBalance(['RKrdSQgg4jcDfuKKwJpwJPLHMbqksg3kDe'])
 
-      expect(balance.eq(37999850000)).to.be.true
+      expect(balance.eq(366999680000)).to.be.true
     })
   })
 

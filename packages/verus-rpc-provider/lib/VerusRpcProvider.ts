@@ -71,19 +71,19 @@ export default class BitcoinRpcProvider extends JsonRpcProvider implements Parti
 
   async getUnspentTransactions(_addresses: (Address | string)[]): Promise<verus.UTXO[]> {
     const addresses = _addresses.map(addressToString)
-    const utxos: verus.rpc.UTXO[] = await this.jsonrpc('listunspent', 0, 9999999, addresses)
-    return utxos.map((utxo) => ({ ...utxo, value: new BigNumber(utxo.amount).times(1e8).toNumber() }))
-  }
+    const addressUtxoResponse = await this.jsonrpc('getaddressutxos', { addresses, chainInfo: true })
 
-  async getAddressTransactionCounts(_addresses: (Address | string)[]) {
-    const addresses = _addresses.map(addressToString)
-    const receivedAddresses: verus.rpc.ReceivedByAddress[] = await this.jsonrpc('listreceivedbyaddress', 0, false, true)
-    return addresses.reduce((acc: verus.AddressTxCounts, addr) => {
-      const receivedAddress = receivedAddresses.find((receivedAddress) => receivedAddress.address === addr)
-      const transactionCount = receivedAddress ? receivedAddress.txids.length : 0
-      acc[addr] = transactionCount
-      return acc
-    }, {})
+    return addressUtxoResponse.utxos.map((utxo: { [key: string]: any }) => {
+      return {
+        txid: utxo.txid,
+        vout: utxo.outputIndex,
+        address: utxo.address,
+        scriptPubKey: utxo.script,
+        amount: new BigNumber(utxo.satoshis).dividedBy(1e8).toNumber(),
+        value: utxo.satoshis,
+        confirmations: addressUtxoResponse.height - utxo.height
+      }
+    })
   }
 
   async getAddressDeltas(_addresses: (Address | string)[]) {
@@ -276,7 +276,7 @@ export default class BitcoinRpcProvider extends JsonRpcProvider implements Parti
   }
 
   async signRawTransaction(hexstring: string) {
-    return this.jsonrpc('signrawtransactionwithwallet', hexstring)
+    return this.jsonrpc('signrawtransaction', hexstring)
   }
 
   async createRawTransaction(transactions: [], outputs: { [index: string]: number }): Promise<string> {

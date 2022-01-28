@@ -50,6 +50,10 @@ export default class VerusNodeWalletProvider extends WalletProvider {
       .then((result: { hash: string; signature: string }) => Buffer.from(result.signature, 'base64').toString('hex'))
   }
 
+  canUpdateFee() {
+    return false
+  }
+
   async withTxFee(func: () => Promise<Transaction<verus.Transaction>>, feePerByte: number) {
     const feePerKB = new BigNumber(feePerByte).div(1e8).times(1000).toNumber()
     const originalTxFee: number = (await this._rpc.jsonrpc('getwalletinfo')).paytxfee
@@ -128,8 +132,8 @@ export default class VerusNodeWalletProvider extends WalletProvider {
     return this._rpc.jsonrpc('dumpprivkey', address)
   }
 
-  async getNewAddress(addressType: verus.AddressType, label = '') {
-    const params = addressType ? [label, addressType] : [label]
+  async getNewAddress(_addressType: verus.AddressType, label = '') {
+    const params = [label]
     const newAddress = await this._rpc.jsonrpc('getnewaddress', ...params)
 
     if (!newAddress) return null

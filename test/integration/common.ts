@@ -491,6 +491,10 @@ async function getRandomAddress(chain: Chain): Promise<Address> {
       return getRandomBitcoinAddress(chain)
     }
 
+    case 'verus': {
+      return getRandomVerusAddress(chain)
+    }
+
     default: {
       throw Error(`Unsupported chain: ${chain.name}`)
     }
@@ -507,6 +511,11 @@ function getRandomEthereumAddress() {
 async function getRandomBitcoinAddress(chain: Chain): Promise<Address> {
   const bitcoinRpcProvider = findProvider(chain.client, BitcoinRpcProvider) as BitcoinRpcProvider
   return bitcoinRpcProvider.jsonrpc('getnewaddress')
+}
+
+async function getRandomVerusAddress(chain: Chain): Promise<Address> {
+  const verusRpcProvider = findProvider(chain.client, VerusRpcProvider) as VerusRpcProvider
+  return verusRpcProvider.jsonrpc('getnewaddress')
 }
 
 async function mineBlock(chain: Chain, blocks = 1) {
@@ -770,6 +779,7 @@ export {
   getNewAddress,
   getRandomAddress,
   getRandomBitcoinAddress,
+  getRandomVerusAddress,
   importBitcoinAddresses,
   fundAddress,
   fundWallet,

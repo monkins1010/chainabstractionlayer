@@ -70,6 +70,10 @@ export default class VerusJsWalletProvider extends VerusWalletProvider(WalletPro
     return signature.toString('hex')
   }
 
+  canUpdateFee() {
+    return false
+  }
+
   async _buildTransaction(targets: verus.OutputTarget[], feePerByte?: number, fixedInputs?: verus.Input[]) {
     const network = this._network
 
