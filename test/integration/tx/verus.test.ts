@@ -2,15 +2,10 @@
 /* eslint-disable no-unused-expressions */
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
-import * as bitcoinJs from 'bitcoinjs-lib'
 import { BigNumber, Transaction, verus } from '../../../packages/types/lib'
-import * as VerusUtils from '../../../packages/verus-utils/lib'
-import { TEST_TIMEOUT, Chain, chains, getNewAddress, getRandomVerusAddress, mineBlock, fundWallet } from '../common'
+import { TEST_TIMEOUT, Chain, chains, getRandomVerusAddress, mineBlock, fundWallet } from '../common'
 import { testTransaction } from './common'
 import config from '../config'
-import { VerusNetwork } from '../../../packages/verus-networks/lib'
-
-const utxolib = require('@bitgo/utxo-lib') // eslint-disable-line
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0'
 
@@ -270,91 +265,91 @@ function testSweepTransaction(chain: Chain) {
 //   })
 // }
 
-function testSignBatchP2SHTransaction(chain: Chain) {
-  it("Should redeem two P2SH's", async () => {
-    const network = chain.network
-    const value = config[chain.name as keyof typeof config].value
-    const OPS = utxolib.opcodes
+// function testSignBatchP2SHTransaction(chain: Chain) {
+//   it("Should redeem two P2SH's", async () => {
+//     const network = chain.network
+//     const value = config[chain.name as keyof typeof config].value
+//     const OPS = utxolib.opcodes
 
-    const { address: unusedAddressOne } = await getNewAddress(chain)
-    await chain.client.chain.sendTransaction({ to: unusedAddressOne, value })
-    await mineBlock(chain)
+//     const { address: unusedAddressOne } = await getNewAddress(chain)
+//     await chain.client.chain.sendTransaction({ to: unusedAddressOne, value })
+//     await mineBlock(chain)
 
-    const { address: unusedAddressTwo } = await getNewAddress(chain)
+//     const { address: unusedAddressTwo } = await getNewAddress(chain)
 
-    const newAddresses = [unusedAddressOne, unusedAddressTwo]
+//     const newAddresses = [unusedAddressOne, unusedAddressTwo]
 
-    const addresses = []
-    for (const newAddress of newAddresses) {
-      const address = await chain.client.getMethod('getWalletAddress')(newAddress)
-      addresses.push(address)
-    }
+//     const addresses = []
+//     for (const newAddress of newAddresses) {
+//       const address = await chain.client.getMethod('getWalletAddress')(newAddress)
+//       addresses.push(address)
+//     }
 
-    const multisigOutputOne = utxolib.script.compile([
-      OPS.OP_2,
-      Buffer.from(addresses[0].publicKey, 'hex'),
-      Buffer.from(addresses[1].publicKey, 'hex'),
-      OPS.OP_2,
-      OPS.OP_CHECKMULTISIG
-    ])
+//     const multisigOutputOne = utxolib.script.compile([
+//       OPS.OP_2,
+//       Buffer.from(addresses[0].publicKey, 'hex'),
+//       Buffer.from(addresses[1].publicKey, 'hex'),
+//       OPS.OP_2,
+//       OPS.OP_CHECKMULTISIG
+//     ])
 
-    const multisigOutputTwo = utxolib.script.compile([
-      OPS.OP_2,
-      Buffer.from(addresses[1].publicKey, 'hex'),
-      Buffer.from(addresses[0].publicKey, 'hex'),
-      OPS.OP_2,
-      OPS.OP_CHECKMULTISIG
-    ])
+//     const multisigOutputTwo = utxolib.script.compile([
+//       OPS.OP_2,
+//       Buffer.from(addresses[1].publicKey, 'hex'),
+//       Buffer.from(addresses[0].publicKey, 'hex'),
+//       OPS.OP_2,
+//       OPS.OP_CHECKMULTISIG
+//     ])
 
-    const paymentVariantOne = utxolib.ECPair.fromPublicKeyBuffer(multisigOutputOne, network as VerusNetwork)
-    const paymentVariantTwo = utxolib.ECPair.fromPublicKeyBuffer(multisigOutputTwo, network as VerusNetwork)
+//     const paymentVariantOne = utxolib.ECPair.fromPublicKeyBuffer(multisigOutputOne, network as VerusNetwork)
+//     const paymentVariantTwo = utxolib.ECPair.fromPublicKeyBuffer(multisigOutputTwo, network as VerusNetwork)
 
-    const addressOne = paymentVariantOne.getAddress()
-    const addressTwo = paymentVariantTwo.getAddress()
+//     const addressOne = paymentVariantOne.getAddress()
+//     const addressTwo = paymentVariantTwo.getAddress()
 
-    const initiationTx = await chain.client.chain.sendBatchTransaction([
-      { to: addressOne, value },
-      { to: addressTwo, value }
-    ])
-    await mineBlock(chain)
+//     const initiationTx = await chain.client.chain.sendBatchTransaction([
+//       { to: addressOne, value },
+//       { to: addressTwo, value }
+//     ])
+//     await mineBlock(chain)
 
-    const multiOne: any = {}
-    const multiTwo: any = {}
+//     const multiOne: any = {}
+//     const multiTwo: any = {}
 
-    for (const voutIndex in initiationTx._raw.vout) {
-      const vout = initiationTx._raw.vout[voutIndex]
-      const paymentVariantEntryOne = paymentVariantOne.getPublicKeyBuffer().toString('hex') === vout.scriptPubKey.hex
-      const paymentVariantEntryTwo = paymentVariantTwo.getPublicKeyBuffer().toString('hex') === vout.scriptPubKey.hex
-      if (paymentVariantEntryOne) multiOne.multiVout = vout
-      if (paymentVariantEntryTwo) multiTwo.multiVout = vout
-    }
+//     for (const voutIndex in initiationTx._raw.vout) {
+//       const vout = initiationTx._raw.vout[voutIndex]
+//       const paymentVariantEntryOne = paymentVariantOne.getPublicKeyBuffer().toString('hex') === vout.scriptPubKey.hex
+//       const paymentVariantEntryTwo = paymentVariantTwo.getPublicKeyBuffer().toString('hex') === vout.scriptPubKey.hex
+//       if (paymentVariantEntryOne) multiOne.multiVout = vout
+//       if (paymentVariantEntryTwo) multiTwo.multiVout = vout
+//     }
 
-    const txb = new bitcoinJs.TransactionBuilder(network as VerusNetwork)
-    const txfee = VerusUtils.calculateFee(3, 3, 9)
+//     const txb = new bitcoinJs.TransactionBuilder(network as VerusNetwork)
+//     const txfee = VerusUtils.calculateFee(3, 3, 9)
 
-    multiOne.multiVout.vSat = value.toNumber()
-    multiTwo.multiVout.vSat = value.toNumber()
+//     multiOne.multiVout.vSat = value.toNumber()
+//     multiTwo.multiVout.vSat = value.toNumber()
 
-    txb.addInput(initiationTx.hash, multiOne.multiVout.n, 0, paymentVariantOne.getPublicKeyBuffer())
-    txb.addInput(initiationTx.hash, multiTwo.multiVout.n, 0, paymentVariantTwo.getPublicKeyBuffer())
-    txb.addOutput(unusedAddressTwo, value.toNumber() * 2 - txfee)
+//     txb.addInput(initiationTx.hash, multiOne.multiVout.n, 0, paymentVariantOne.getPublicKeyBuffer())
+//     txb.addInput(initiationTx.hash, multiTwo.multiVout.n, 0, paymentVariantTwo.getPublicKeyBuffer())
+//     txb.addOutput(unusedAddressTwo, value.toNumber() * 2 - txfee)
 
-    const tx = txb.buildIncomplete()
+//     const tx = txb.buildIncomplete()
 
-    const claimTxHash = await chain.client.getMethod('sendRawTransaction')(tx.toHex())
+//     const claimTxHash = await chain.client.getMethod('sendRawTransaction')(tx.toHex())
 
-    await mineBlock(chain)
+//     await mineBlock(chain)
 
-    const claimTxRaw = await chain.client.getMethod('getRawTransactionByHash')(claimTxHash)
-    const claimTx = await chain.client.getMethod('decodeRawTransaction')(claimTxRaw)
+//     const claimTxRaw = await chain.client.getMethod('getRawTransactionByHash')(claimTxHash)
+//     const claimTx = await chain.client.getMethod('decodeRawTransaction')(claimTxRaw)
 
-    const claimVouts = claimTx.vout
-    const claimVins = claimTx.vin
+//     const claimVouts = claimTx.vout
+//     const claimVins = claimTx.vin
 
-    expect(claimVins.length).to.equal(2)
-    expect(claimVouts.length).to.equal(1)
-  })
-}
+//     expect(claimVins.length).to.equal(2)
+//     expect(claimVouts.length).to.equal(1)
+//   })
+// }
 
 describe('Transactions', function () {
   this.timeout(TEST_TIMEOUT)
@@ -365,7 +360,7 @@ describe('Transactions', function () {
     testBatchTransaction(chains.verusWithNode)
     //testSignPSBTSimple(chains.verusWithNode)
     //testSignPSBTScript(chains.verusWithNode)
-    testSignBatchP2SHTransaction(chains.verusWithNode)
+    //testSignBatchP2SHTransaction(chains.verusWithNode)
   })
 
   describe('Verus - Js', () => {
@@ -376,7 +371,7 @@ describe('Transactions', function () {
     testBatchTransaction(chains.verusWithJs)
     //testSignPSBTSimple(chains.verusWithJs)
     //testSignPSBTScript(chains.verusWithJs)
-    testSignBatchP2SHTransaction(chains.verusWithJs)
+    //testSignBatchP2SHTransaction(chains.verusWithJs)
     testSweepTransaction(chains.verusWithJs)
     testOpReturn(chains.verusWithJs)
   })

@@ -3,10 +3,12 @@ import { WalletProvider } from '@liquality/wallet-provider'
 import { VerusNetwork } from '@liquality/verus-networks'
 import { verus } from '@liquality/types'
 
-import { Psbt, ECPair, ECPairInterface, Transaction as BitcoinJsTransaction, script } from 'bitcoinjs-lib'
+import { ECPair, ECPairInterface, Transaction as BitcoinJsTransaction, script } from 'bitcoinjs-lib'
 import { signAsync as signBitcoinMessage } from 'bitcoinjs-message'
 import { mnemonicToSeed } from 'bip39'
 import { BIP32Interface, fromSeed } from 'bip32'
+
+const utxolib = require('@bitgo/utxo-lib') // eslint-disable-line
 
 type WalletProviderConstructor<T = WalletProvider> = new (...args: any[]) => T
 
@@ -87,45 +89,29 @@ export default class VerusJsWalletProvider extends VerusWalletProvider(WalletPro
       })
     }
 
-    const psbt = new Psbt({ network })
+    const tx = new utxolib.TransactionBuilder(network, feePerByte)
 
     for (let i = 0; i < inputs.length; i++) {
-      const psbtInput: any = {
-        hash: inputs[i].txid,
-        index: inputs[i].vout,
-        sequence: 0
-      }
-
-      const inputTxRaw = await this.getMethod('getRawTransaction')(inputs[i].txid)
-      psbtInput.nonWitnessUtxo = Buffer.from(inputTxRaw, 'hex')
-
-      psbt.addInput(psbtInput)
+      tx.addInput(inputs[i].txid, inputs[i].vout)
     }
 
     for (const output of targets) {
       if (output.script) {
-        psbt.addOutput({
-          value: output.value,
-          script: output.script
-        })
+        tx.addOutput(output.script, output.value)
       } else {
-        psbt.addOutput({
-          value: output.value,
-          address: output.address
-        })
+        tx.addOutput(output.address, output.value)
       }
     }
+
+    tx.setVersion(4)
 
     for (let i = 0; i < inputs.length; i++) {
       const wallet = await this.getWalletAddress(inputs[i].address)
       const keyPair = await this.keyPair(wallet.derivationPath)
-      psbt.signInput(i, keyPair)
-      psbt.validateSignaturesOfInput(i)
+      tx.sign(i, keyPair)
     }
 
-    psbt.finalizeAllInputs()
-
-    return { hex: psbt.extractTransaction().toHex(), fee }
+    return { hex: tx.build().toHex(), fee }
   }
 
   async _buildSweepTransaction(externalChangeAddress: string, feePerByte: number) {
@@ -149,14 +135,14 @@ export default class VerusJsWalletProvider extends VerusWalletProvider(WalletPro
     return this._buildTransaction(_outputs, feePerByte, inputs)
   }
 
-  async signPSBT(data: string, inputs: verus.PsbtInputTarget[]) {
-    const psbt = Psbt.fromBase64(data, { network: this._network })
-    for (const input of inputs) {
-      const keyPair = await this.keyPair(input.derivationPath)
-      psbt.signInput(input.index, keyPair)
-    }
-    return psbt.toBase64()
-  }
+  // async signPSBT(data: string, inputs: verus.PsbtInputTarget[]) {
+  //   const psbt = Psbt.fromBase64(data, { network: this._network })
+  //   for (const input of inputs) {
+  //     const keyPair = await this.keyPair(input.derivationPath)
+  //     psbt.signInput(input.index, keyPair)
+  //   }
+  //   return psbt.toBase64()
+  // }
 
   async signBatchP2SHTransaction(
     inputs: [{ inputTxHex: string; index: number; vout: any; outputScript: Buffer; txInputIndex?: number }],

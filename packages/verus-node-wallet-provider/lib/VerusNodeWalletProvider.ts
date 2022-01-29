@@ -1,4 +1,4 @@
-import { Psbt, ECPair, script, Transaction as BitcoinJsTransaction } from 'bitcoinjs-lib'
+import { ECPair, script, Transaction as BitcoinJsTransaction } from 'bitcoinjs-lib'
 import { uniq, flatten } from 'lodash'
 import { WalletProvider } from '@liquality/wallet-provider'
 import { JsonRpcProvider } from '@liquality/jsonrpc-provider'
@@ -91,19 +91,19 @@ export default class VerusNodeWalletProvider extends WalletProvider {
   //   }, newFeePerByte)
   // }
 
-  async signPSBT(data: string, inputs: verus.PsbtInputTarget[]) {
-    const psbt = Psbt.fromBase64(data, { network: this._network })
+  // async signPSBT(data: string, inputs: verus.PsbtInputTarget[]) {
+  //   const psbt = Psbt.fromBase64(data, { network: this._network })
 
-    for (const input of inputs) {
-      const usedAddresses = await this.getUsedAddresses()
-      const address = usedAddresses.find((address) => address.derivationPath === input.derivationPath)
-      const wif = await this.dumpPrivKey(address.address)
-      const keyPair = ECPair.fromWIF(wif, this._network)
-      psbt.signInput(input.index, keyPair)
-    }
+  //   for (const input of inputs) {
+  //     const usedAddresses = await this.getUsedAddresses()
+  //     const address = usedAddresses.find((address) => address.derivationPath === input.derivationPath)
+  //     const wif = await this.dumpPrivKey(address.address)
+  //     const keyPair = ECPair.fromWIF(wif, this._network)
+  //     psbt.signInput(input.index, keyPair)
+  //   }
 
-    return psbt.toBase64()
-  }
+  //   return psbt.toBase64()
+  // }
 
   async signBatchP2SHTransaction(
     inputs: [{ inputTxHex: string; index: number; vout: any; outputScript: Buffer }],

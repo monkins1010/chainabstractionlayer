@@ -2,7 +2,7 @@ import { JsonRpcProvider } from '@liquality/jsonrpc-provider'
 import { addressToString } from '@liquality/utils'
 import { normalizeTransactionObject, decodeRawTransaction } from '@liquality/verus-utils'
 import { TxNotFoundError, BlockNotFoundError } from '@liquality/errors'
-import { BitcoinNetwork } from '@liquality/bitcoin-networks'
+import { VerusNetwork } from '@liquality/verus-networks'
 import { verus, Transaction, Block, ChainProvider, SendOptions, Address, BigNumber } from '@liquality/types'
 
 import { flatten } from 'lodash'
@@ -14,18 +14,18 @@ interface ProviderOptions {
   username?: string
   // Authentication password
   password?: string
-  // Bitcoin network
-  network: BitcoinNetwork
+  // Verus network
+  network: VerusNetwork
   // Number of block confirmations to target for fee. Defaul: 1
   feeBlockConfirmations?: number
   // Default fee per byte for transactions. Default: 3
   defaultFeePerByte?: number
 }
 
-export default class BitcoinRpcProvider extends JsonRpcProvider implements Partial<ChainProvider> {
+export default class VerusRpcProvider extends JsonRpcProvider implements Partial<ChainProvider> {
   _feeBlockConfirmations: number
   _defaultFeePerByte: number
-  _network: BitcoinNetwork
+  _network: VerusNetwork
   _usedAddressCache: { [key: string]: boolean }
 
   constructor(options: ProviderOptions) {

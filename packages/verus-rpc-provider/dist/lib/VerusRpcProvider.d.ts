@@ -1,18 +1,18 @@
 import { JsonRpcProvider } from '@liquality/jsonrpc-provider';
-import { BitcoinNetwork } from '@liquality/bitcoin-networks';
+import { VerusNetwork } from '@liquality/verus-networks';
 import { verus, Transaction, Block, ChainProvider, SendOptions, Address, BigNumber } from '@liquality/types';
 interface ProviderOptions {
     uri: string;
     username?: string;
     password?: string;
-    network: BitcoinNetwork;
+    network: VerusNetwork;
     feeBlockConfirmations?: number;
     defaultFeePerByte?: number;
 }
-export default class BitcoinRpcProvider extends JsonRpcProvider implements Partial<ChainProvider> {
+export default class VerusRpcProvider extends JsonRpcProvider implements Partial<ChainProvider> {
     _feeBlockConfirmations: number;
     _defaultFeePerByte: number;
-    _network: BitcoinNetwork;
+    _network: VerusNetwork;
     _usedAddressCache: {
         [key: string]: boolean;
     };
