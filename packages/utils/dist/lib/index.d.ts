@@ -1,0 +1,12 @@
+import 'setimmediate';
+import { BigNumber, Address } from '@liquality/types';
+declare function addressToString(address: Address | string): string;
+declare function sleep(ms: number): Promise<unknown>;
+declare function asyncSetImmediate(): Promise<unknown>;
+declare function caseInsensitiveEqual(left: string, right: string): boolean;
+declare function validateValue(value: BigNumber): void;
+declare function validateSecretHash(secretHash: string): void;
+declare function validateSecret(secret: string): void;
+declare function validateSecretAndHash(secret: string, secretHash: string): void;
+declare function validateExpiration(expiration: number): void;
+export { sleep, addressToString, asyncSetImmediate, caseInsensitiveEqual, validateValue, validateSecret, validateSecretHash, validateSecretAndHash, validateExpiration };

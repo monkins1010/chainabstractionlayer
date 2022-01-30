@@ -1,0 +1,2 @@
+(()=>{"use strict";var e={};(()=>{var t=e;Object.defineProperty(t,"__esModule",{value:!0}),t.NearNetworks=void 0;t.NearNetworks={near_mainnet:{name:"mainnet",networkId:"mainnet",nodeUrl:"https://rpc.mainnet.near.org",helperUrl:"https://helper.mainnet.near.org",coinType:"397",isTestnet:!1},near_testnet:{name:"testnet",networkId:"testnet",nodeUrl:"https://rpc.testnet.near.org",helperUrl:"https://helper.testnet.near.org",coinType:"397",isTestnet:!0}}})(),module.exports=e})();
+//# sourceMappingURL=index.js.map
