@@ -46,8 +46,12 @@ export default class VerusRpcProvider extends JsonRpcProvider implements Partial
       const fee = await this.jsonrpc('estimatefee', numberOfBlocks)
 
       if (fee && fee > 0) {
-        // Get satoshis per byte (* 100000000 / 1000)
-        return new BigNumber(fee).times(1e5).toNumber()
+        if (fee < 0.0005) {
+          return 25
+        } else {
+          // Get satoshis per byte (* 100000000 / 1000)
+          return new BigNumber(fee).times(1e5).toNumber()
+        }
       }
 
       throw new Error('Invalid estimated fee')
