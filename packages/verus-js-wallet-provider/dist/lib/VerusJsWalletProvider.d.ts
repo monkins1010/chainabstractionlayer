@@ -2,7 +2,6 @@
 import { WalletProvider } from '@liquality/wallet-provider';
 import { VerusNetwork } from '@liquality/verus-networks';
 import { verus } from '@liquality/types';
-import { ECPairInterface } from 'bitcoinjs-lib';
 import { BIP32Interface } from 'bip32';
 declare type WalletProviderConstructor<T = WalletProvider> = new (...args: any[]) => T;
 interface VerusJsWalletProviderOptions {
@@ -10,6 +9,17 @@ interface VerusJsWalletProviderOptions {
     mnemonic: string;
     baseDerivationPath: string;
     addressType?: verus.AddressType;
+}
+interface ECPairInterface {
+    compressed: boolean;
+    network: any;
+    lowR: boolean;
+    privateKey?: Buffer;
+    toWIF(): string;
+    verify(hash: Buffer, signature: Buffer): boolean;
+    publicKey: Buffer;
+    sign(hash: Buffer, lowR?: boolean): Buffer;
+    getPublicKey?(): Buffer;
 }
 declare const VerusJsWalletProvider_base;
 export default class VerusJsWalletProvider extends VerusJsWalletProvider_base {

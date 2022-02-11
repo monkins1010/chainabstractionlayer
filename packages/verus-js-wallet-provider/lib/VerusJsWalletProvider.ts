@@ -3,7 +3,7 @@ import { WalletProvider } from '@liquality/wallet-provider'
 import { VerusNetwork } from '@liquality/verus-networks'
 import { verus } from '@liquality/types'
 
-import { ECPair, ECPairInterface, Transaction as BitcoinJsTransaction, script } from 'bitcoinjs-lib'
+import { Transaction as BitcoinJsTransaction, script } from 'bitcoinjs-lib'
 import { signAsync as signBitcoinMessage } from 'bitcoinjs-message'
 import { mnemonicToSeed } from 'bip39'
 import { BIP32Interface, fromSeed } from 'bip32'
@@ -17,6 +17,55 @@ interface VerusJsWalletProviderOptions {
   mnemonic: string
   baseDerivationPath: string
   addressType?: verus.AddressType
+}
+
+interface ECPairInterface {
+  compressed: boolean
+  network: any
+  lowR: boolean
+  privateKey?: Buffer
+  toWIF(): string
+  verify(hash: Buffer, signature: Buffer): boolean
+  publicKey: Buffer
+  sign(hash: Buffer, lowR?: boolean): Buffer
+  getPublicKey?(): Buffer
+}
+
+class ECPairShim implements ECPairInterface {
+  bitgoEcPair
+  compressed = false
+  network: any = null
+  lowR = false
+  privateKey: Buffer
+  publicKey: Buffer = Buffer.from([])
+
+  constructor(bitgoEcPair: any) {
+    this.bitgoEcPair = bitgoEcPair
+    this.privateKey = bitgoEcPair.getPrivateKeyBuffer()
+    this.publicKey = bitgoEcPair.getPublicKeyBuffer()
+    this.network = bitgoEcPair.network
+    this.compressed = bitgoEcPair.compressed
+  }
+
+  toWIF() {
+    return this.bitgoEcPair.toWIF()
+  }
+
+  static fromWIF(string: string, network: any): ECPairShim {
+    return new ECPairShim(utxolib.ECPair.fromWIF(string, network))
+  }
+
+  verify(hash: Buffer, signature: Buffer): boolean {
+    return this.bitgoEcPair.verify(hash, signature)
+  }
+
+  sign(hash: Buffer): Buffer {
+    return this.bitgoEcPair.sign(hash)
+  }
+
+  getPublicKey(): Buffer {
+    return this.bitgoEcPair.getPublicKeyBuffer()
+  }
 }
 
 export default class VerusJsWalletProvider extends VerusWalletProvider(WalletProvider as WalletProviderConstructor) {
@@ -53,7 +102,7 @@ export default class VerusJsWalletProvider extends VerusWalletProvider(WalletPro
 
   async keyPair(derivationPath: string): Promise<ECPairInterface> {
     const wif = await this._toWIF(derivationPath)
-    return ECPair.fromWIF(wif, this._network)
+    return ECPairShim.fromWIF(wif, utxolib.networks[this._network.bitgokey])
   }
 
   private async _toWIF(derivationPath: string): Promise<string> {
@@ -89,7 +138,12 @@ export default class VerusJsWalletProvider extends VerusWalletProvider(WalletPro
       })
     }
 
-    const tx = new utxolib.TransactionBuilder(network, feePerByte)
+    const tx = new utxolib.TransactionBuilder(utxolib.networks[network.bitgokey], feePerByte)
+    const currentHeight: number = await this.getMethod('getBlockHeight')()
+    tx.setVersion(4)
+    tx.setVersionGroupId(0x892f2085)
+    tx.setExpiryHeight(currentHeight + 20)
+    tx.setLockTime(currentHeight)
 
     for (let i = 0; i < inputs.length; i++) {
       tx.addInput(inputs[i].txid, inputs[i].vout)
@@ -103,12 +157,11 @@ export default class VerusJsWalletProvider extends VerusWalletProvider(WalletPro
       }
     }
 
-    tx.setVersion(4)
-
     for (let i = 0; i < inputs.length; i++) {
       const wallet = await this.getWalletAddress(inputs[i].address)
       const keyPair = await this.keyPair(wallet.derivationPath)
-      tx.sign(i, keyPair)
+
+      tx.sign(i, keyPair, null, null, inputs[i].value)
     }
 
     return { hex: tx.build().toHex(), fee }
