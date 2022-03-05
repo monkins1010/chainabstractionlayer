@@ -185,7 +185,7 @@ export default <T extends Constructor<Provider>>(superclass: T) => {
     }
 
     getAddressFromPublicKey(publicKey: Buffer) {
-      return bitgo.ECPair.fromPublicKeyBuffer(publicKey, this._network).getAddress()
+      return bitgo.ECPair.fromPublicKeyBuffer(publicKey, bitgo.networks[this._network.bitgokey]).getAddress()
     }
 
     async importAddresses() {

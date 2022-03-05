@@ -17,8 +17,8 @@ describe('Verus Wallet provider', () => {
 
   beforeEach(() => {
     provider = new VerusJsWalletProvider({
-      network: VerusNetworks.verus_testnet,
-      baseDerivationPath: `m/84'/${VerusNetworks.verus_testnet.coinType}'/0`,
+      network: VerusNetworks.verus,
+      baseDerivationPath: `m/84'/${VerusNetworks.verus.coinType}'/0`,
       mnemonic
     })
   })
@@ -44,8 +44,8 @@ describe('Verus Wallet provider', () => {
 
     it('should import to new client', async () => {
       newProvider = new VerusJsWalletProvider({
-        network: VerusNetworks.verus_testnet,
-        baseDerivationPath: `m/84'/${VerusNetworks.verus_testnet.coinType}'/0`,
+        network: VerusNetworks.verus,
+        baseDerivationPath: `m/84'/${VerusNetworks.verus.coinType}'/0`,
         mnemonic
       })
       await newProvider.setDerivationCache(addressesFromDerivationCacheExpected)
@@ -59,8 +59,8 @@ describe('Verus Wallet provider', () => {
 
     it("should fail if mnemonic doesn't match", async () => {
       newProvider = new VerusJsWalletProvider({
-        network: VerusNetworks.verus_testnet,
-        baseDerivationPath: `m/84'/${VerusNetworks.verus_testnet.coinType}'/0`,
+        network: VerusNetworks.verus,
+        baseDerivationPath: `m/84'/${VerusNetworks.verus.coinType}'/0`,
         mnemonic: generateMnemonic(256)
       })
       await expect(newProvider.setDerivationCache(addressesFromDerivationCacheExpected)).to.eventually.be.rejected
