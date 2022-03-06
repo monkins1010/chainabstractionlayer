@@ -33,7 +33,6 @@ export interface Transaction {
     hash: string;
     version: number;
     locktime: number;
-    size: number;
     vin: Input[];
     vout: Output[];
     confirmations?: number;

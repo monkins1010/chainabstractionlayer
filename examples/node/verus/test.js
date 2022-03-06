@@ -7,7 +7,7 @@ console.log(networks)
 
 const verus = new Client()
 verus.addProvider(new VerusRpcProvider({
-  uri: 'http://localhost:20656',
+  uri: 'http://localhost:21412',
   username: 'verus',
   password: 'local321'
 }))

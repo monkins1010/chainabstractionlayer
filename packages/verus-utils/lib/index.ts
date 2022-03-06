@@ -156,7 +156,6 @@ function decodeRawTransaction(hex: string, network: BitcoinNetwork = verus.netwo
     hash: vBitgoTx.getId(),
     version: vBitgoTx.version,
     locktime: vBitgoTx.locktime,
-    size: vBitgoTx.byteLength(),
     vin,
     vout,
     hex
@@ -178,7 +177,7 @@ function normalizeTransactionObject(
   }
 
   if (fee) {
-    const feePrice = Math.round(fee / tx.size)
+    const feePrice = Math.round(fee / tx.hex.length)
     Object.assign(result, {
       fee,
       feePrice

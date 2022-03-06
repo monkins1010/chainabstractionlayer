@@ -40,7 +40,6 @@ describe('Verus Util', () => {
         hash: '0b560e8fb2f15f31059760bd0fd7c150aa4cfd9456f03b47f4e34a3640b3a63d',
         version: 4,
         locktime: 81879,
-        size: 302,
         vin: [
           {
             txid: 'c491990de56e5f21a2ee25114b810fc3e039affcbd225486c53718cce7a8334f',

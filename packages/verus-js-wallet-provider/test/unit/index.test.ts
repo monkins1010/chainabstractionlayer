@@ -17,7 +17,7 @@ describe('Verus Wallet provider', () => {
 
   beforeEach(() => {
     provider = new VerusJsWalletProvider({
-      network: VerusNetworks.verus,
+      network: VerusNetworks.verus_testnet,
       baseDerivationPath: `m/84'/${VerusNetworks.verus.coinType}'/0`,
       mnemonic
     })
@@ -26,6 +26,7 @@ describe('Verus Wallet provider', () => {
   describe('getDerivationCache', () => {
     it('should return derived addresses', async () => {
       const addresses = await provider.getAddresses(0, 1)
+
       const addressesFromDerivationCache = await provider.getDerivationCache()
 
       expect(addresses[0]).to.equal(addressesFromDerivationCache[addresses[0].derivationPath])

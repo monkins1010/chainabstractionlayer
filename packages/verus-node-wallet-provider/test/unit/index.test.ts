@@ -20,13 +20,13 @@ describe('Verus Node Wallet provider', () => {
     client = new Client()
     provider = new VerusNodeWalletProvider({
       network: VerusNetworks.verus_testnet,
-      uri: 'http://localhost:20656',
+      uri: 'http://localhost:21412',
       username: 'verus',
       password: 'local321'
     })
     client.addProvider(provider)
 
-    mockJsonRpc('http://localhost:20656', verusRpc, 100)
+    mockJsonRpc('http://localhost:21412', verusRpc, 100)
   })
 
   describe('signMessage', () => {

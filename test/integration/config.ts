@@ -23,7 +23,7 @@ export default {
   },
   verus: {
     rpc: {
-      host: 'http://localhost:20656',
+      host: 'http://localhost:21412',
       username: 'verus',
       password: 'local321'
     },

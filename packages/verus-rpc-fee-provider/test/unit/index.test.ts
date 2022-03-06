@@ -21,13 +21,13 @@ describe('Verus RPC Fee provider', () => {
     client = new Client()
     client.addProvider(
       new VerusRpcProvider({
-        uri: 'http://localhost:20656',
+        uri: 'http://localhost:21412',
         network: VerusNetworks.verus_testnet
       })
     )
     client.addProvider(new VerusRpcFeeProvider())
 
-    mockJsonRpc('http://localhost:20656', verusRpc, 100)
+    mockJsonRpc('http://localhost:21412', verusRpc, 100)
   })
 
   describe('getFees', () => {
