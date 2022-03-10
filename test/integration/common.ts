@@ -54,7 +54,7 @@ const CONSTANTS = {
   ETHEREUM_ADDRESS_DEFAULT_BALANCE: new BigNumber(10 * 1e18),
   ETHEREUM_NON_EXISTING_CONTRACT: '0000000000000000000000000000000000000000',
   VERUS_FEE_PER_BYTE: 3,
-  VERUS_ADDRESS_DEFAULT_BALANCE: new BigNumber(10 * 1e8),
+  VERUS_ADDRESS_DEFAULT_BALANCE: new BigNumber(1 * 1e8),
   GWEI: 1e9
 }
 
@@ -332,7 +332,7 @@ async function fundAddress(chain: Chain, address: string, value?: BigNumber): Pr
     case 'verus': {
       tx = await chains.verusWithNode.client.chain.sendTransaction({
         to: address,
-        value: value || CONSTANTS.BITCOIN_ADDRESS_DEFAULT_BALANCE
+        value: value || CONSTANTS.VERUS_ADDRESS_DEFAULT_BALANCE
       })
       break
     }

@@ -138,7 +138,7 @@ export default class VerusJsWalletProvider extends VerusWalletProvider(WalletPro
       })
     }
 
-    const tx = new utxolib.TransactionBuilder(utxolib.networks[network.bitgokey], feePerByte)
+    const tx = new utxolib.TransactionBuilder(utxolib.networks[network.bitgokey], feePerByte * 100)
     const currentHeight: number = await this.getMethod('getBlockHeight')()
     tx.setVersion(4)
     tx.setVersionGroupId(0x892f2085)
