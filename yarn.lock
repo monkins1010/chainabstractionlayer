@@ -1565,6 +1565,30 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@liquality/verus@workspace:packages/verus":
+  version: 0.0.0-use.local
+  resolution: "@liquality/verus@workspace:packages/verus"
+  dependencies:
+    "@liquality/client": "workspace:*"
+    "@liquality/errors": "workspace:*"
+    "@liquality/types": "workspace:*"
+    "@liquality/utils": "workspace:*"
+    "@types/bip32": ^2.0.0
+    "@types/bip39": ^3.0.0
+    "@types/bitcoinjs-lib": ^5.0.0
+    "@types/lodash": ^4.14.178
+    "@types/memoizee": ^0.4.7
+    bip174: ^2.0.1
+    bip32: 2.0.6
+    bip39: ^3.0.4
+    bitcoinjs-lib: 5.2.0
+    bitcoinjs-message: 2.2.0
+    coinselect: ^3.1.12
+    lodash: ^4.17.21
+    memoizee: ^0.4.15
+  languageName: unknown
+  linkType: soft
+
 "@manypkg/find-root@npm:^1.1.0":
   version: 1.1.0
   resolution: "@manypkg/find-root@npm:1.1.0"
