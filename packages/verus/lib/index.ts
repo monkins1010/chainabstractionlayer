@@ -6,4 +6,4 @@ export * as VerusUtils from './utils';
 export { VerusBaseWalletProvider } from './wallet/VerusBaseWallet';
 export { VerusJsonRpcBaseProvider } from './chain/jsonRpc/VerusJsonRpcBaseProvider';
 export { VerusJsonRpcProvider } from './chain/jsonRpc/VerusJsonRpcProvider';
-
+export { VerusNodeWalletProvider } from './wallet/VerusNodeWallet';

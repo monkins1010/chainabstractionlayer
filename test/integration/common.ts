@@ -4,6 +4,7 @@ import { EvmNetworks } from '@liquality/evm';
 import { NearNetworks } from '@liquality/near';
 import { SolanaNetworks } from '@liquality/solana';
 import { TerraNetworks } from '@liquality/terra';
+import { VerusNetworks } from '@liquality/verus';
 import { Address, AddressType, BigNumber, FeeType, SwapParams, Transaction } from '@liquality/types';
 import { retry, sha256, sleep } from '@liquality/utils';
 import { expect } from 'chai';
@@ -16,6 +17,7 @@ import {
     NearClient,
     SolanaClient,
     TerraClient,
+    VerusClient,
 } from './clients';
 import {
     BtcHdWalletConfig,
@@ -26,6 +28,7 @@ import {
     NearConfig,
     SolanaConfig,
     TerraConfig,
+    VerusConfig,
 } from './config';
 import { Chain, ChainType, IConfig, WalletType } from './types';
 
@@ -97,6 +100,14 @@ export const Chains: { [key in ChainType]: Partial<{ [key in WalletType]: Chain 
             client: SolanaClient,
         },
     },
+    [ChainType.verus]: {
+        hd: {
+            id: 'VERUS',
+            name: 'verus',
+            config: VerusConfig(VerusNetworks.verus_testnet),
+            client: VerusClient,
+        },
+    },
 };
 
 export async function getSwapParams(client: Client, config: IConfig, expiryInSeconds = 200, native = true) {
@@ -132,6 +143,7 @@ export async function increaseTime(chain: Chain, timestamp: number) {
         }
 
         case 'NEAR':
+        case 'VERUS':
         case 'TERRA':
         case 'SOLANA': {
             const currentTime = Math.round(Date.now() / 1000);
@@ -173,6 +185,7 @@ export async function mineBlock(chain: Chain, numberOfBlocks = 1) {
         }
         case 'NEAR':
         case 'TERRA':
+        case 'VERUS':
         case 'SOLANA': {
             await sleep(10000);
             break;

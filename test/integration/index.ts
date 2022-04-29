@@ -6,6 +6,7 @@ import { shouldBehaveLikeEvmClient } from './clients/evm';
 import { shouldBehaveLikeNearClient } from './clients/near';
 import { shouldBehaveLikeSolanaClient } from './clients/solana';
 import { shouldBehaveLikeTerraClient } from './clients/terra';
+import { shouldBehaveLikeVerusClient } from './clients/verus';
 import { startLocalNetworks, stopLocalNetworks } from './environment';
 
 chai.use(chaiAsPromised);
@@ -24,6 +25,7 @@ describe('Integration tests', function () {
         shouldBehaveLikeNearClient();
         shouldBehaveLikeTerraClient();
         shouldBehaveLikeSolanaClient();
+        shouldBehaveLikeVerusClient();
     });
 
     after(async () => {
