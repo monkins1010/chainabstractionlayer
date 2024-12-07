@@ -35,6 +35,7 @@ export enum ChainType {
     near = 'near',
     terra = 'terra',
     solana = 'solana',
+    verus = 'verus'
 }
 
 export enum WalletType {

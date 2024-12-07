@@ -1,4 +1,5 @@
 export { BtcHdWalletConfig, BtcLedgerConfig, BtcNodeConfig } from './clients/bitcoin/config';
+export { VerusNodeConfig } from './clients/verus/config';
 export { EVMConfig, EVMLedgerConfig } from './clients/evm/config';
 export { NearConfig } from './clients/near/config';
 export { SolanaConfig } from './clients/solana/config';

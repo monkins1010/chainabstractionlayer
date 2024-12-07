@@ -1,4 +1,5 @@
 import { BitcoinNetworks } from '@chainify/bitcoin';
+import { VerusNetworks } from '@chainify/verus';
 import { Client } from '@chainify/client';
 import { EvmNetworks } from '@chainify/evm';
 import { NearNetworks } from '@chainify/near';
@@ -11,6 +12,7 @@ import {
     BitcoinHDWalletClient,
     BitcoinLedgerClient,
     BitcoinNodeWalletClient,
+    VerusNodeWalletClient,
     EVMClient,
     EVMLedgerClient,
     NearClient,
@@ -21,6 +23,7 @@ import {
     BtcHdWalletConfig,
     BtcLedgerConfig,
     BtcNodeConfig,
+    VerusNodeConfig,
     EVMConfig,
     EVMLedgerConfig,
     NearConfig,
@@ -53,6 +56,14 @@ export const Chains: { [key in ChainType]: Partial<{ [key in WalletType]: Chain 
             config: BtcLedgerConfig(BitcoinNetworks.bitcoin_regtest),
             client: BitcoinLedgerClient,
         },
+    },
+    [ChainType.verus]: {
+        node: {
+            id: 'VRSC',
+            name: 'btc-node-wallet',
+            config: VerusNodeConfig(VerusNetworks.verus_testnet),
+            client: VerusNodeWalletClient,
+        }
     },
 
     [ChainType.evm]: {
@@ -140,6 +151,7 @@ export async function increaseTime(chain: Chain, timestamp: number) {
             break;
         }
 
+        case 'VRSC':
         case 'BTC': {
             const maxNumberOfBlocks = 100;
             for (let i = 0; i < maxNumberOfBlocks; i++) {
@@ -178,6 +190,7 @@ export async function mineBlock(chain: Chain, numberOfBlocks = 1) {
             break;
         }
 
+        case 'VRSC':
         case 'BTC': {
             const miningAddressLabel = 'miningAddress';
             let address;
@@ -236,6 +249,16 @@ export async function fundAddress(chain: Chain, address: AddressType, value?: Bi
     switch (chain.id) {
         case 'BTC': {
             const { client } = Chains.btc.node;
+            tx = await client.wallet.sendTransaction({
+                to: address,
+                value: value || new BigNumber(10 * 1e8),
+            });
+
+            break;
+        }
+
+        case 'VRSC': {
+            const { client } = Chains.verus.node;
             tx = await client.wallet.sendTransaction({
                 to: address,
                 value: value || new BigNumber(10 * 1e8),
