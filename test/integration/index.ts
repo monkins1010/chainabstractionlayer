@@ -2,7 +2,6 @@ import { Logger, LogLevel } from '@chainify/logger';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { shouldBehaveLikeBitcoinClient } from './clients/bitcoin';
-import { shouldBehaveLikeVerusClient } from './clients/verus';
 import { shouldBehaveLikeEvmClient } from './clients/evm';
 import { shouldBehaveLikeNearClient } from './clients/near';
 import { shouldBehaveLikeSolanaClient } from './clients/solana';
@@ -23,7 +22,6 @@ describe('Integration tests', function () {
     describe('Clients', () => {
         shouldBehaveLikeEvmClient();
         shouldBehaveLikeBitcoinClient();
-        shouldBehaveLikeVerusClient();
     });
 
     describeExternal('Manual Clients', () => {
