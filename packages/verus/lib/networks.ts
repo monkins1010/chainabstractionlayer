@@ -10,7 +10,7 @@ const verus: VerusNetwork = {
 }
 
 const verus_testnet: VerusNetwork = {
-    name: 'verus_testnet',
+    name: 'verustest',
     ...bitgo.networks.verustest,
     bitgokey: 'verustest',
     coinType: '1',

@@ -13,7 +13,6 @@ import {
     BitcoinNodeWalletClient,
     VerusNodeWalletClient,
     EVMClient,
-    EVMLedgerClient,
     NearClient,
     SolanaClient,
     TerraClient,
@@ -23,7 +22,6 @@ import {
     BtcNodeConfig,
     VerusNodeConfig,
     EVMConfig,
-    EVMLedgerConfig,
     NearConfig,
     SolanaConfig,
     TerraConfig,
@@ -63,14 +61,7 @@ export const Chains: { [key in ChainType]: Partial<{ [key in WalletType]: Chain 
             name: 'evm',
             config: EVMConfig(EvmNetworks.ganache),
             client: EVMClient,
-        },
-
-        ledger: {
-            id: 'EVM',
-            name: 'evm-ledger',
-            config: EVMLedgerConfig(EvmNetworks.ganache),
-            client: EVMLedgerClient,
-        },
+        }
     },
 
     [ChainType.near]: {
@@ -133,6 +124,7 @@ export async function increaseTime(chain: Chain, timestamp: number) {
             break;
         }
 
+        case 'VRSC':
         case 'NEAR':
         case 'TERRA':
         case 'SOLANA': {
@@ -142,7 +134,6 @@ export async function increaseTime(chain: Chain, timestamp: number) {
             break;
         }
 
-        case 'VRSC':
         case 'BTC': {
             const maxNumberOfBlocks = 100;
             for (let i = 0; i < maxNumberOfBlocks; i++) {
@@ -174,7 +165,26 @@ export async function mineBlock(chain: Chain, numberOfBlocks = 1) {
         case 'EVM': {
             return client.chain.sendRpcRequest('evm_mine', []);
         }
-        case 'VRSC':
+        case 'VRSC': {
+            try {
+                // Wait for a block to be mined naturally
+                const curentHeight = await client.chain.sendRpcRequest('getblockcount', []);
+                process.stdout.write('Waiting for mined block.');
+                while (false) { // eslint-disable-line
+                    const newHeight = await client.chain.sendRpcRequest('getblockcount', []);
+                    if (newHeight > curentHeight) {
+                        break;
+                    }
+                    process.stdout.write('.');
+                    await sleep(2000);
+                }
+                process.stdout.write('\n');
+
+            } catch (e) {
+                await sleep(10000);
+            }
+            break;
+        }
         case 'NEAR':
         case 'TERRA':
         case 'SOLANA': {

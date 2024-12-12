@@ -2,6 +2,8 @@ import { AssetTypes, BigNumber, ChainId, Network } from '@chainify/types';
 
 import { IConfig } from '../../types';
 
+import utxolib from '@bitgo/utxo-lib';
+
 export const VerusNodeConfig = (network: Network): IConfig => {
     return {
         ...(CommonVerusConfig(network) as IConfig),
@@ -14,12 +16,12 @@ export const VerusNodeConfig = (network: Network): IConfig => {
 
 const CommonVerusConfig = (network: Network): Partial<IConfig> => {
     return {
-        network,
+        network: utxolib.networks[network.name],
         chainOptions: {
             uri: 'http://localhost:25789/',
             username: 'verus',
             password: 'pass',
-            network,
+            network: utxolib.networks[network.name],
         },
         assets: [
             {
