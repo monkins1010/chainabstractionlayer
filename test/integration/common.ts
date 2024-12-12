@@ -1,4 +1,5 @@
 import { BitcoinNetworks } from '@chainify/bitcoin';
+import { VerusNetworks } from '@chainify/verus';
 import { Client } from '@chainify/client';
 import { EvmNetworks } from '@chainify/evm';
 import { NearNetworks } from '@chainify/near';
@@ -11,6 +12,7 @@ import {
     BitcoinHDWalletClient,
     BitcoinLedgerClient,
     BitcoinNodeWalletClient,
+    VerusNodeWalletClient,
     EVMClient,
     EVMLedgerClient,
     NearClient,
@@ -21,6 +23,7 @@ import {
     BtcHdWalletConfig,
     BtcLedgerConfig,
     BtcNodeConfig,
+    VerusNodeConfig,
     EVMConfig,
     EVMLedgerConfig,
     NearConfig,
@@ -53,6 +56,14 @@ export const Chains: { [key in ChainType]: Partial<{ [key in WalletType]: Chain 
             config: BtcLedgerConfig(BitcoinNetworks.bitcoin_regtest),
             client: BitcoinLedgerClient,
         },
+    },
+    [ChainType.verus]: {
+        node: {
+            id: 'VRSC',
+            name: 'verus-node-wallet',
+            config: VerusNodeConfig(VerusNetworks.verus_testnet),
+            client: VerusNodeWalletClient,
+        }
     },
 
     [ChainType.evm]: {

@@ -49,6 +49,56 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@bitgo/blake2b-wasm@npm:^3.0.1":
+  version: 3.2.3
+  resolution: "@bitgo/blake2b-wasm@npm:3.2.3"
+  dependencies:
+    nanoassert: ^1.0.0
+  checksum: f398ea78559486095bfa898fd4fd5d0a8f022ffbcd31732854cec9118967f695a009339a3b4bf2cef62a2a38b8d93d4781769b3516b15fb3b11a4f12177a1f21
+  languageName: node
+  linkType: hard
+
+"@bitgo/blake2b@npm:3.0.1":
+  version: 3.0.1
+  resolution: "@bitgo/blake2b@npm:3.0.1"
+  dependencies:
+    "@bitgo/blake2b-wasm": ^3.0.1
+    nanoassert: ^2.0.0
+  checksum: 1d3c3da68ccd651560481e38e3deefdadf9a59126737f75571eec2815e0a5eecc2fb812bf99c2ac57c4250b79210b0d56d2940b44955c4835f81858d5b26118e
+  languageName: node
+  linkType: hard
+
+"@bitgo/utxo-lib@git+https://github.com/VerusCoin/BitGoJS.git#utxo-lib-verus":
+  version: 1.9.6
+  resolution: "@bitgo/utxo-lib@https://github.com/VerusCoin/BitGoJS.git#commit=3c6efada45b6a4fc2a1065951c307016dca7f953"
+  dependencies:
+    "@bitgo/blake2b": 3.0.1
+    bech32: 0.0.3
+    bigi: 1.4.0
+    bip32: 2.0.6
+    bip66: 1.1.0
+    bitcoin-ops: "git+https://github.com/VerusCoin/bitcoin-ops"
+    bs58check: 2.0.0
+    create-hash: 1.1.0
+    create-hmac: 1.1.3
+    debug: ~3.1.0
+    ecurve: 1.0.0
+    merkle-lib: 2.0.10
+    pushdata-bitcoin: 1.0.1
+    randombytes: 2.0.1
+    safe-buffer: 5.0.1
+    secp256k1: 3.5.2
+    typeforce: 1.11.3
+    varuint-bitcoin: 1.0.4
+    verus-typescript-primitives: "git+https://github.com/VerusCoin/verus-typescript-primitives.git"
+    wif: 2.0.1
+  dependenciesMeta:
+    secp256k1:
+      optional: true
+  checksum: 61d78be6fb7f22f720d8d2e10c8b4f83738a90ebfba98a0a0aad4f4cbd1ffb46e85f5a03f232ea3d6e2b95e75a3fb42c914a910257989046a8176345369d1d97
+  languageName: node
+  linkType: hard
+
 "@chainify/bitcoin-ledger@workspace:packages/bitcoin-ledger":
   version: 0.0.0-use.local
   resolution: "@chainify/bitcoin-ledger@workspace:packages/bitcoin-ledger"
@@ -289,7 +339,7 @@ __metadata:
   resolution: "@chainify/types@workspace:packages/types"
   dependencies:
     "@ethersproject/bignumber": 5.7.0
-    "@liquality/cryptoassets": 1.6.0
+    "@liquality/cryptoassets": "git+https://github.com/monkins1010/cryptoassets.git"
     bignumber.js: ^9.0.2
   languageName: unknown
   linkType: soft
@@ -306,6 +356,30 @@ __metadata:
     bs58: 5.0.0
     crypto-hashing: ^1.0.0
     setimmediate: ^1.0.5
+  languageName: unknown
+  linkType: soft
+
+"@chainify/verus@workspace:packages/verus":
+  version: 0.0.0-use.local
+  resolution: "@chainify/verus@workspace:packages/verus"
+  dependencies:
+    "@bitgo/utxo-lib": "git+https://github.com/VerusCoin/BitGoJS.git#utxo-lib-verus"
+    "@chainify/client": "workspace:*"
+    "@chainify/errors": "workspace:*"
+    "@chainify/types": "workspace:*"
+    "@chainify/utils": "workspace:*"
+    "@types/bip32": ^2.0.0
+    "@types/bip39": ^3.0.0
+    "@types/lodash": ^4.14.178
+    "@types/memoizee": ^0.4.7
+    bip174: ^2.0.1
+    bip32: 2.0.6
+    bip39: ^3.0.4
+    bitcoinjs-lib: 5.2.0
+    bitcoinjs-message: 2.2.0
+    coinselect: ^3.1.12
+    lodash: 4.17.21
+    memoizee: ^0.4.15
   languageName: unknown
   linkType: soft
 
@@ -2296,17 +2370,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@liquality/cryptoassets@npm:1.6.0":
-  version: 1.6.0
-  resolution: "@liquality/cryptoassets@npm:1.6.0"
+"@liquality/cryptoassets@git+https://github.com/monkins1010/cryptoassets.git":
+  version: 1.7.5
+  resolution: "@liquality/cryptoassets@https://github.com/monkins1010/cryptoassets.git#commit=535177cd0e1cf067d90b6ffad4dda41fb0c8d6d7"
   dependencies:
-    bignumber.js: ^8.0.1
-    bitcoin-address-validation: ^0.2.9
+    bignumber.js: ^9.0.2
+    bitcoin-address-validation: ^2.2.1
     bs58: ^4.0.1
     cashaddrjs: ^0.4.4
-    ethereumjs-util: ^7.1.3
+    ethereumjs-util: ^7.1.4
     lodash: ^4.17.11
-  checksum: f7e35f45862104cd8b5b529dfc102305545ccc1ac322823dca02b11d1da0263bd429f48cbe2668fce33650a70f4da66cce64c2898d98921cf617e56f06dfb2cf
+  checksum: 2bb3d14ca5520186cfe05c58349ff38b8cc2a36ee145fbf76ca23146202acf31a670bd2b7eb0f35e3c3c96ed3bf8e1af5851901162f66ece4d2012dc2df0ad50
   languageName: node
   linkType: hard
 
@@ -5349,7 +5423,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"base-x@npm:^3.0.2, base-x@npm:^3.0.6, base-x@npm:^3.0.8":
+"base-x@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "base-x@npm:1.1.0"
+  checksum: 54e24c32919442627fe48aaa76338f8ff02187b42eae6e75e829eef3e44e37f43b128a271733322a7c798626ac7f4fb06184db2ef0ce1da7f37c448ef6f76e26
+  languageName: node
+  linkType: hard
+
+"base-x@npm:^3.0.2, base-x@npm:^3.0.8":
   version: 3.0.9
   resolution: "base-x@npm:3.0.9"
   dependencies:
@@ -5365,10 +5446,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"base58-js@npm:^1.0.0":
+  version: 1.0.5
+  resolution: "base58-js@npm:1.0.5"
+  checksum: 46c1b39d3a70bca0a47d56069c74a25d547680afd0f28609c90f280f5d614f5de36db5df993fa334db24008a68ab784a72fcdaa13eb40078e03c8999915a1100
+  languageName: node
+  linkType: hard
+
 "base64-js@npm:^1.3.1":
   version: 1.5.1
   resolution: "base64-js@npm:1.5.1"
   checksum: 669632eb3745404c2f822a18fc3a0122d2f9a7a13f7fb8b5823ee19d1d2ff9ee5b52c53367176ea4ad093c332fd5ab4bd0ebae5a8e27917a4105a4cfc86b1005
+  languageName: node
+  linkType: hard
+
+"base64url@npm:3.0.1":
+  version: 3.0.1
+  resolution: "base64url@npm:3.0.1"
+  checksum: a77b2a3a526b3343e25be424de3ae0aa937d78f6af7c813ef9020ef98001c0f4e2323afcd7d8b2d2978996bf8c42445c3e9f60c218c622593e5fdfd54a3d6e18
   languageName: node
   linkType: hard
 
@@ -5396,6 +5491,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"bech32@npm:0.0.3":
+  version: 0.0.3
+  resolution: "bech32@npm:0.0.3"
+  checksum: 1eb19698e78773c50c2191a45a7850144637a31c981f41f5ba7cea0ac10d8879b32d5b681c2756d5c25687e2d4b3d4d5c7e4441fe3536782d15ebc49cb86d167
+  languageName: node
+  linkType: hard
+
 "bech32@npm:1.1.4, bech32@npm:^1.1.2, bech32@npm:^1.1.3":
   version: 1.1.4
   resolution: "bech32@npm:1.1.4"
@@ -5403,7 +5505,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bech32@npm:^2.0.0":
+"bech32@npm:2.0.0, bech32@npm:^2.0.0":
   version: 2.0.0
   resolution: "bech32@npm:2.0.0"
   checksum: fa15acb270b59aa496734a01f9155677b478987b773bf701f465858bf1606c6a970085babd43d71ce61895f1baa594cb41a2cd1394bd2c6698f03cc2d811300e
@@ -5426,6 +5528,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"bigi@npm:1.4.0":
+  version: 1.4.0
+  resolution: "bigi@npm:1.4.0"
+  checksum: 55994a7d0f063ad74b1cd6be1527bb31e4a1c28b7dc12893392cf11f63f7f3c1209adeb73f6189ca38f14ad7b088629f566fa134284b1809ae2d2e2abc17c155
+  languageName: node
+  linkType: hard
+
+"bigi@npm:^1.1.0":
+  version: 1.4.2
+  resolution: "bigi@npm:1.4.2"
+  checksum: 82b5ed2c779b2065a269fd8233c39e26bef9e5b129ca1b66579d056de1f5e2627850ac42bd952c477b28560f216760709bf486078299efe617b1898c8ea70306
+  languageName: node
+  linkType: hard
+
 "bigint-buffer@npm:^1.1.5":
   version: 1.1.5
   resolution: "bigint-buffer@npm:1.1.5"
@@ -5443,13 +5559,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bignumber.js@npm:^8.0.1":
-  version: 8.1.1
-  resolution: "bignumber.js@npm:8.1.1"
-  checksum: 71544348507cd16c2c152699a8e5146964d9cf4f46108075bcd16a964dffb3963256259fc6ffc9753b4d33dfd0cf863a6b564103a3a20e10002f12a1902e8075
-  languageName: node
-  linkType: hard
-
 "bignumber.js@npm:^9.0.0, bignumber.js@npm:^9.0.1, bignumber.js@npm:^9.0.2, bignumber.js@npm:^9.1.0":
   version: 9.1.1
   resolution: "bignumber.js@npm:9.1.1"
@@ -5464,7 +5573,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bindings@npm:^1.3.0, bindings@npm:^1.5.0":
+"bindings@npm:^1.2.1, bindings@npm:^1.3.0, bindings@npm:^1.5.0":
   version: 1.5.0
   resolution: "bindings@npm:1.5.0"
   dependencies:
@@ -5558,7 +5667,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bip66@npm:^1.1.0, bip66@npm:^1.1.5":
+"bip66@npm:1.1.0":
+  version: 1.1.0
+  resolution: "bip66@npm:1.1.0"
+  checksum: 9830962acab61e3117ce62ac5d7ffefa6c155d7822dfc3c9910722341f516160e2ae521bfccbb4829d6af82a61a3907413784c16b79f10e7fc4719d5c76d6ccc
+  languageName: node
+  linkType: hard
+
+"bip66@npm:^1.1.0, bip66@npm:^1.1.3, bip66@npm:^1.1.5":
   version: 1.1.5
   resolution: "bip66@npm:1.1.5"
   dependencies:
@@ -5567,14 +5683,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bitcoin-address-validation@npm:^0.2.9":
-  version: 0.2.9
-  resolution: "bitcoin-address-validation@npm:0.2.9"
+"bitcoin-address-validation@npm:^2.2.1":
+  version: 2.2.3
+  resolution: "bitcoin-address-validation@npm:2.2.3"
   dependencies:
-    base-x: ^3.0.6
-    bech32: ^1.1.3
-    hash.js: ^1.1.7
-  checksum: 9de7bb864943b07173c42a6d979df2bd4e2a7510416f7f8e985487e3689300dd48353805f83734840d5124a0c9f57223b908bbeb0e3c6b1cd1938d4a9dfc6af6
+    base58-js: ^1.0.0
+    bech32: ^2.0.0
+    sha256-uint8array: ^0.10.3
+  checksum: 71ff67397275ef52a9e5e1f614fb57e9142d2a4d2f140c266051dc71f8b698930516133a2e1261def457ad4ecbe650535d4360367ece2d389001ec2a5a3d60f6
+  languageName: node
+  linkType: hard
+
+"bitcoin-ops@git+https://github.com/VerusCoin/bitcoin-ops":
+  version: 1.4.1
+  resolution: "bitcoin-ops@https://github.com/VerusCoin/bitcoin-ops.git#commit=a5f8f56e658301bc39881d41740b3a0010530efd"
+  checksum: 1285272a30839a8a0e2ef564ff4e386dbf11a5c35f8392b7c94d9c9d9cb3b805a944a2410e174285a588b576d36309e94a17722a1cd185ae67ee5ff2bcfc654b
   languageName: node
   linkType: hard
 
@@ -5686,6 +5809,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"bn.js@npm:5.2.1, bn.js@npm:^5.0.0, bn.js@npm:^5.1.1, bn.js@npm:^5.1.2, bn.js@npm:^5.1.3, bn.js@npm:^5.2.0, bn.js@npm:^5.2.1":
+  version: 5.2.1
+  resolution: "bn.js@npm:5.2.1"
+  checksum: 3dd8c8d38055fedfa95c1d5fc3c99f8dd547b36287b37768db0abab3c239711f88ff58d18d155dd8ad902b0b0cee973747b7ae20ea12a09473272b0201c9edd3
+  languageName: node
+  linkType: hard
+
 "bn.js@npm:^4.0.0, bn.js@npm:^4.1.0, bn.js@npm:^4.10.0, bn.js@npm:^4.11.0, bn.js@npm:^4.11.6, bn.js@npm:^4.11.8, bn.js@npm:^4.11.9, bn.js@npm:^4.8.0":
   version: 4.12.0
   resolution: "bn.js@npm:4.12.0"
@@ -5693,10 +5823,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bn.js@npm:^5.0.0, bn.js@npm:^5.1.1, bn.js@npm:^5.1.2, bn.js@npm:^5.1.3, bn.js@npm:^5.2.0, bn.js@npm:^5.2.1":
-  version: 5.2.1
-  resolution: "bn.js@npm:5.2.1"
-  checksum: 3dd8c8d38055fedfa95c1d5fc3c99f8dd547b36287b37768db0abab3c239711f88ff58d18d155dd8ad902b0b0cee973747b7ae20ea12a09473272b0201c9edd3
+"bn.js@npm:^4.11.3":
+  version: 4.12.1
+  resolution: "bn.js@npm:4.12.1"
+  checksum: f7f84a909bd07bdcc6777cccbf280b629540792e6965fb1dd1aeafba96e944f197ca10cbec2692f51e0a906ff31da1eb4317f3d1cd659d6f68b8bcd211f7ecbc
   languageName: node
   linkType: hard
 
@@ -5935,12 +6065,31 @@ __metadata:
   languageName: node
   linkType: hard
 
+"bs58@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "bs58@npm:3.1.0"
+  dependencies:
+    base-x: ^1.1.0
+  checksum: 6d757a49958c43bc630f3b327511ce3ee065307c24240aa86189f72df0a4a8245c7ce7e7abad209b637f155006952c7b8f04bb4aa6ee4212a891882424bca82e
+  languageName: node
+  linkType: hard
+
 "bs58@npm:^4.0.0, bs58@npm:^4.0.1":
   version: 4.0.1
   resolution: "bs58@npm:4.0.1"
   dependencies:
     base-x: ^3.0.2
   checksum: b3c5365bb9e0c561e1a82f1a2d809a1a692059fae016be233a6127ad2f50a6b986467c3a50669ce4c18929dcccb297c5909314dd347a25a68c21b68eb3e95ac2
+  languageName: node
+  linkType: hard
+
+"bs58check@npm:2.0.0":
+  version: 2.0.0
+  resolution: "bs58check@npm:2.0.0"
+  dependencies:
+    bs58: ^4.0.0
+    create-hash: ^1.1.0
+  checksum: 5194dc4b9af6cf07f49cef2eb66e872fbf6483bd939c9691cec6f6f79e6c9e69be998ef95c7023788ff1759e7d805b1ba0b20e156f9597c24c9e6087f740505d
   languageName: node
   linkType: hard
 
@@ -5952,6 +6101,16 @@ __metadata:
     create-hash: ^1.1.0
     safe-buffer: ^5.1.2
   checksum: 43bdf08a5dd04581b78f040bc4169480e17008da482ffe2a6507327bbc4fc5c28de0501f7faf22901cfe57fbca79cbb202ca529003fedb4cb8dccd265b38e54d
+  languageName: node
+  linkType: hard
+
+"bs58check@npm:^1.0.6":
+  version: 1.3.4
+  resolution: "bs58check@npm:1.3.4"
+  dependencies:
+    bs58: ^3.1.0
+    create-hash: ^1.1.0
+  checksum: b8d796720bd00d276c4da717151455ccc6464dd44a5d994fdb1149725ccbf1fb216c3cc68e64aa0f9e8933fc175e7faebd24afa064a50cc0f7b746984106430d
   languageName: node
   linkType: hard
 
@@ -6364,6 +6523,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "chainify@workspace:."
   dependencies:
+    "@bitgo/utxo-lib": "git+https://github.com/VerusCoin/BitGoJS.git#utxo-lib-verus"
     "@changesets/changelog-github": ^0.4.2
     "@changesets/cli": ^2.20.0
     "@commitlint/cli": ^16.1.0
@@ -7253,7 +7413,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"create-hash@npm:^1.1.0, create-hash@npm:^1.1.2, create-hash@npm:^1.2.0":
+"create-hash@npm:1.1.0":
+  version: 1.1.0
+  resolution: "create-hash@npm:1.1.0"
+  dependencies:
+    inherits: ^2.0.1
+    ripemd160: ^1.0.0
+    sha.js: ^2.3.6
+  checksum: 094e08ed212d2319d491d0786b7ff57561501b5069b567bd6af64a2bf0c1033264e623ddb4ba7df6f4360e6525421c25658c93fba66c770c4f025a4d13508bcc
+  languageName: node
+  linkType: hard
+
+"create-hash@npm:1.2.0, create-hash@npm:^1.1.0, create-hash@npm:^1.1.2, create-hash@npm:^1.2.0":
   version: 1.2.0
   resolution: "create-hash@npm:1.2.0"
   dependencies:
@@ -7263,6 +7434,16 @@ __metadata:
     ripemd160: ^2.0.1
     sha.js: ^2.4.0
   checksum: 02a6ae3bb9cd4afee3fabd846c1d8426a0e6b495560a977ba46120c473cb283be6aa1cace76b5f927cf4e499c6146fb798253e48e83d522feba807d6b722eaa9
+  languageName: node
+  linkType: hard
+
+"create-hmac@npm:1.1.3":
+  version: 1.1.3
+  resolution: "create-hmac@npm:1.1.3"
+  dependencies:
+    create-hash: ^1.1.0
+    inherits: ^2.0.1
+  checksum: 50919e67d4a521c35874c0036bdb20fad2dfb0cb5990c83d1817222a969a20a6997ab1f35a4d06fc7d878872f1c6f18653f9e9b3d7196895e970cd832e2ab89c
   languageName: node
   linkType: hard
 
@@ -7550,6 +7731,15 @@ __metadata:
   dependencies:
     ms: ^2.1.1
   checksum: b3d8c5940799914d30314b7c3304a43305fd0715581a919dacb8b3176d024a782062368405b47491516d2091d6462d4d11f2f4974a405048094f8bfebfa3071c
+  languageName: node
+  linkType: hard
+
+"debug@npm:~3.1.0":
+  version: 3.1.0
+  resolution: "debug@npm:3.1.0"
+  dependencies:
+    ms: 2.0.0
+  checksum: 0b52718ab957254a5b3ca07fc34543bc778f358620c206a08452251eb7fc193c3ea3505072acbf4350219c14e2d71ceb7bdaa0d3370aa630b50da790458d08b3
   languageName: node
   linkType: hard
 
@@ -8012,6 +8202,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ecurve@npm:1.0.0":
+  version: 1.0.0
+  resolution: "ecurve@npm:1.0.0"
+  dependencies:
+    bigi: ^1.1.0
+  checksum: 90ea6eae3713444c37795bdf718af7867856a7aaaf953dc5e6403f05080bd8ce6c1ea08e1916d9114d13dce68df6f9573f482decf3c91eb5f46f66effa4931f0
+  languageName: node
+  linkType: hard
+
 "ed25519-hd-key@npm:^1.2.0":
   version: 1.3.0
   resolution: "ed25519-hd-key@npm:1.3.0"
@@ -8048,6 +8247,21 @@ __metadata:
     minimalistic-assert: ^1.0.1
     minimalistic-crypto-utils: ^1.0.1
   checksum: d56d21fd04e97869f7ffcc92e18903b9f67f2d4637a23c860492fbbff5a3155fd9ca0184ce0c865dd6eb2487d234ce9551335c021c376cd2d3b7cb749c7d10f4
+  languageName: node
+  linkType: hard
+
+"elliptic@npm:^6.2.3":
+  version: 6.6.1
+  resolution: "elliptic@npm:6.6.1"
+  dependencies:
+    bn.js: ^4.11.9
+    brorand: ^1.1.0
+    hash.js: ^1.0.0
+    hmac-drbg: ^1.0.1
+    inherits: ^2.0.4
+    minimalistic-assert: ^1.0.1
+    minimalistic-crypto-utils: ^1.0.1
+  checksum: 27b14a52f68bbbc0720da259f712cb73e953f6d2047958cd02fb0d0ade2e83849dc39fb4af630889c67df8817e24237428cf59c4f4c07700f755b401149a7375
   languageName: node
   linkType: hard
 
@@ -8976,7 +9190,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ethereumjs-util@npm:^7.0.10, ethereumjs-util@npm:^7.0.2, ethereumjs-util@npm:^7.1.0, ethereumjs-util@npm:^7.1.1, ethereumjs-util@npm:^7.1.2, ethereumjs-util@npm:^7.1.3, ethereumjs-util@npm:^7.1.5":
+"ethereumjs-util@npm:^7.0.10, ethereumjs-util@npm:^7.0.2, ethereumjs-util@npm:^7.1.0, ethereumjs-util@npm:^7.1.1, ethereumjs-util@npm:^7.1.2, ethereumjs-util@npm:^7.1.4, ethereumjs-util@npm:^7.1.5":
   version: 7.1.5
   resolution: "ethereumjs-util@npm:7.1.5"
   dependencies:
@@ -13514,7 +13728,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"merkle-lib@npm:^2.0.10":
+"merkle-lib@npm:2.0.10, merkle-lib@npm:^2.0.10":
   version: 2.0.10
   resolution: "merkle-lib@npm:2.0.10"
   checksum: 057331fe5e15a12a35c94c40bcc956c6b2d38cf6a3c69858b05a55434a9ac7be552595be5955491d3c380c7a91c522e429c7d13db7b676463b729de05c07b9e1
@@ -14195,10 +14409,33 @@ __metadata:
   languageName: node
   linkType: hard
 
+"nan@npm:^2.2.1":
+  version: 2.22.0
+  resolution: "nan@npm:2.22.0"
+  dependencies:
+    node-gyp: latest
+  checksum: 222e3a090e326c72f6782d948f44ee9b81cfb2161d5fe53216f04426a273fd094deee9dcc6813096dd2397689a2b10c1a92d3885d2e73fd2488a51547beb2929
+  languageName: node
+  linkType: hard
+
 "nano-json-stream-parser@npm:^0.1.2":
   version: 0.1.2
   resolution: "nano-json-stream-parser@npm:0.1.2"
   checksum: 5bfe146358c659e0aa7d5e0003416be929c9bd02ba11b1e022b78dddf25be655e33d810249c1687d2c9abdcee5cd4d00856afd1b266a5a127236c0d16416d33a
+  languageName: node
+  linkType: hard
+
+"nanoassert@npm:^1.0.0":
+  version: 1.1.0
+  resolution: "nanoassert@npm:1.1.0"
+  checksum: f360fe639db8edc422de9f5a8a7d384ba9c11e9c6fac149f7ad3b0a94e4ec9d5aa44ce55b3e4c7682658efad792604fc96c336b0e80a3590744104ba58af80c7
+  languageName: node
+  linkType: hard
+
+"nanoassert@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "nanoassert@npm:2.0.0"
+  checksum: b1d366f9524405f3337192d32dda6ac0b02374e4d0550c9aad33480caf2eb3c84c06f18f41f4c5404c14f6fc1ae6b84692b4375166dcb9f2d04a2ea9b9bccba0
   languageName: node
   linkType: hard
 
@@ -15929,7 +16166,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pushdata-bitcoin@npm:^1.0.1":
+"pushdata-bitcoin@npm:1.0.1, pushdata-bitcoin@npm:^1.0.1":
   version: 1.0.1
   resolution: "pushdata-bitcoin@npm:1.0.1"
   dependencies:
@@ -15999,6 +16236,13 @@ __metadata:
   version: 5.1.1
   resolution: "quick-lru@npm:5.1.1"
   checksum: a516faa25574be7947969883e6068dbe4aa19e8ef8e8e0fd96cddd6d36485e9106d85c0041a27153286b0770b381328f4072aa40d3b18a19f5f7d2b78b94b5ed
+  languageName: node
+  linkType: hard
+
+"randombytes@npm:2.0.1":
+  version: 2.0.1
+  resolution: "randombytes@npm:2.0.1"
+  checksum: 9f93b8f66253fdaffd82241a2d44747600769bfd5e4a3752aa599f6f2145720e5ea7df460f6d2266f12ae91a3bc4ffa2c5d3271dc49794deb8001e38ed4b076e
   languageName: node
   linkType: hard
 
@@ -16717,6 +16961,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ripemd160@npm:^1.0.0":
+  version: 1.0.1
+  resolution: "ripemd160@npm:1.0.1"
+  checksum: 6b8f062005544eeff883d9a9cf1d35b00fa8bae904ca050599c59ff5f3f28b5789ca313a3bf5b1b3b92e7e63013443d9b6e35bbb0c5d9451c9cd58cc82e4016e
+  languageName: node
+  linkType: hard
+
 "rlp@npm:^2.0.0, rlp@npm:^2.2.1, rlp@npm:^2.2.2, rlp@npm:^2.2.3, rlp@npm:^2.2.4, rlp@npm:^2.2.7":
   version: 2.2.7
   resolution: "rlp@npm:2.2.7"
@@ -16806,6 +17057,13 @@ __metadata:
     has-symbols: ^1.0.3
     isarray: ^2.0.5
   checksum: f43cb98fe3b566327d0c09284de2b15fb85ae964a89495c1b1a5d50c7c8ed484190f4e5e71aacc167e16231940079b326f2c0807aea633d47cc7322f40a6b57f
+  languageName: node
+  linkType: hard
+
+"safe-buffer@npm:5.0.1":
+  version: 5.0.1
+  resolution: "safe-buffer@npm:5.0.1"
+  checksum: 640f78a802831d8ea6cb60943b8f171854659908b62272acb32d15b5e51583f788e3edaf5827edd6883041432364094e6e551bd0eb6b68f0ac7af7e5a01f9e35
   languageName: node
   linkType: hard
 
@@ -16903,6 +17161,23 @@ __metadata:
   dependencies:
     pbkdf2: ^3.0.3
   checksum: e09cf253b0974171bbcb77fa46405bb07cb8e241e2851fc5f23b38526a33105f0f7748a4d60027642f40bd4518ada30b1dce5005c05d17a25cbcefad371d4259
+  languageName: node
+  linkType: hard
+
+"secp256k1@npm:3.5.2":
+  version: 3.5.2
+  resolution: "secp256k1@npm:3.5.2"
+  dependencies:
+    bindings: ^1.2.1
+    bip66: ^1.1.3
+    bn.js: ^4.11.3
+    create-hash: ^1.1.2
+    drbg.js: ^1.0.1
+    elliptic: ^6.2.3
+    nan: ^2.2.1
+    node-gyp: latest
+    safe-buffer: ^5.1.0
+  checksum: bb2090c427e7f9bf017e5d21e26d4e38ffe21a3cceccaf2d5854283a13d41cbd1ed00080950e46453c39a7a23352c06b54fe8dd29bf6df9d461d9b5961f7b84d
   languageName: node
   linkType: hard
 
@@ -17111,7 +17386,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sha.js@npm:2, sha.js@npm:^2.4.0, sha.js@npm:^2.4.8":
+"sha.js@npm:2, sha.js@npm:^2.3.6, sha.js@npm:^2.4.0, sha.js@npm:^2.4.8":
   version: 2.4.11
   resolution: "sha.js@npm:2.4.11"
   dependencies:
@@ -17130,6 +17405,13 @@ __metadata:
     charenc: ">= 0.0.1"
     crypt: ">= 0.0.1"
   checksum: da9f47e949988e2f595ef19733fd1dc736866ef6de4e421a55c13b444c03ae532e528b7350ae6ea55d9fb053be61d4648ec2cd5250d46cfdbdf4f6b4e763713d
+  languageName: node
+  linkType: hard
+
+"sha256-uint8array@npm:^0.10.3":
+  version: 0.10.7
+  resolution: "sha256-uint8array@npm:0.10.7"
+  checksum: ff735efd42664ab3d663cbc71a2e5f58a02637e9d57e072c509b5765f5368a2dc34fafefa390e065ef24415946b780ac72fd4582eeeb745ece42256de5b85e94
   languageName: node
   linkType: hard
 
@@ -19098,6 +19380,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"typeforce@npm:1.11.3":
+  version: 1.11.3
+  resolution: "typeforce@npm:1.11.3"
+  dependencies:
+    inherits: ^2.0.1
+  checksum: a8750b4b16d567e798529df05814137654a1e0a069f4e14b197cd1ee486220c6d99494930814382165fc4bdb167c379f3592a8b1251ad87d74aeed770f7b8bfe
+  languageName: node
+  linkType: hard
+
 "typeforce@npm:^1.11.3, typeforce@npm:^1.11.5":
   version: 1.18.0
   resolution: "typeforce@npm:1.18.0"
@@ -19560,6 +19851,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"varuint-bitcoin@npm:1.0.4":
+  version: 1.0.4
+  resolution: "varuint-bitcoin@npm:1.0.4"
+  checksum: 5f882c2230f40a7ea891e789be71fb8037130ed0b24dda63ae03eeb656b0853e421c523e629d65b53dada19acbe0a1f15fa572591921569b16ee80bbe5171ad8
+  languageName: node
+  linkType: hard
+
 "varuint-bitcoin@npm:1.1.2, varuint-bitcoin@npm:^1.0.1, varuint-bitcoin@npm:^1.0.4, varuint-bitcoin@npm:^1.1.2":
   version: 1.1.2
   resolution: "varuint-bitcoin@npm:1.1.2"
@@ -19584,6 +19882,19 @@ __metadata:
     core-util-is: 1.0.2
     extsprintf: ^1.2.0
   checksum: c431df0bedf2088b227a4e051e0ff4ca54df2c114096b0c01e1cbaadb021c30a04d7dd5b41ab277bcd51246ca135bf931d4c4c796ecae7a4fef6d744ecef36ea
+  languageName: node
+  linkType: hard
+
+"verus-typescript-primitives@git+https://github.com/VerusCoin/verus-typescript-primitives.git":
+  version: 1.0.0
+  resolution: "verus-typescript-primitives@https://github.com/VerusCoin/verus-typescript-primitives.git#commit=ca149bcef98d226ffc6eccfd4bd089620ca2c965"
+  dependencies:
+    base64url: 3.0.1
+    bech32: 2.0.0
+    bn.js: 5.2.1
+    bs58check: 2.0.0
+    create-hash: 1.2.0
+  checksum: b624bbd12e8e8470cd652aa01a8b237bf77641ef4e8484b86fe95747466c7f392b8b4be6012cdf6c6ea017a82e380c54419934bc816833558c9241d775d45e1c
   languageName: node
   linkType: hard
 
@@ -20666,6 +20977,15 @@ __metadata:
   dependencies:
     string-width: ^1.0.2 || 2 || 3 || 4
   checksum: d5fc37cd561f9daee3c80e03b92ed3e84d80dde3365a8767263d03dacfc8fa06b065ffe1df00d8c2a09f731482fcacae745abfbb478d4af36d0a891fad4834d3
+  languageName: node
+  linkType: hard
+
+"wif@npm:2.0.1":
+  version: 2.0.1
+  resolution: "wif@npm:2.0.1"
+  dependencies:
+    bs58check: ^1.0.6
+  checksum: f6e77953465026cd83536a969dbd095f934b4f54502c43b2e3119321581e74ebdaf4711a8c6cff36523238f696ddb842f18892868df38c925483d99e4161a35f
   languageName: node
   linkType: hard
 

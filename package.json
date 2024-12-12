@@ -2,6 +2,7 @@
     "name": "chainify",
     "version": "1.0.10",
     "devDependencies": {
+        "@bitgo/utxo-lib": "git+https://github.com/VerusCoin/BitGoJS.git#utxo-lib-verus",
         "@changesets/changelog-github": "^0.4.2",
         "@changesets/cli": "^2.20.0",
         "@commitlint/cli": "^16.1.0",
@@ -45,8 +46,12 @@
         "dev": "turbo run dev --parallel --no-cache",
         "env:integration": "docker-compose -f test/integration/environment/btc/docker-compose.yaml up -d --force-recreate --renew-anon-volumes",
         "env:integration:bootup": "sleep 10",
+        "env:verusintegration": "docker-compose -f test/integration/environment/verus/docker-compose.yaml up -d --force-recreate --renew-anon-volumes",
+        "env:verusintegration:bootup": "sleep 30",
         "test": "yarn env:integration && yarn env:integration:bootup && yarn test:integration",
+        "testverus": "yarn env:verusintegration && yarn env:verusintegration:bootup && yarn test:verusintegration",
         "test:integration": "yarn build && cross-env NODE_ENV=test TS_NODE_PROJECT=test/tsconfig.json TS_NODE_FILES=true mocha --exit test/integration/index.ts",
+        "test:verusintegration": "yarn build && cross-env NODE_ENV=test TS_NODE_PROJECT=test/tsconfig.json TS_NODE_FILES=true mocha --exit test/integration/verusindex.ts",
         "build": "yarn turbo run build --filter=@chainify/evm-contracts && turbo run build --concurrency=10 --filter=!@chainify/evm-contracts",
         "clean": "yarn workspaces foreach run clean && rm -rf node_modules ",
         "lint": "yarn lint:ts && yarn prettier:check",
@@ -58,7 +63,8 @@
         "release": "yarn workspaces foreach --from '@chainify/*' npm publish --access public",
         "build-release": "yarn build --force && yarn release",
         "release:beta": "yarn release --tag beta",
-        "docs": "typedoc"
+        "docs": "typedoc",
+        "postinstall": "node scripts/postinstall.js"
     },
     "workspaces": [
         "packages/*"
@@ -70,6 +76,7 @@
         "@ledgerhq/hw-transport-webhid": "6.27.10",
         "@ledgerhq/cryptoassets": "7.3.0",
         "@ledgerhq/hw-app-eth": "6.30.5",
-        "@ledgerhq/hw-app-btc": "9.1.2"
+        "@ledgerhq/hw-app-btc": "9.1.2",
+        "@liquality/cryptoassets": "git+https://github.com/monkins1010/cryptoassets.git"
     }
 }
