@@ -119,7 +119,7 @@ function testSignPSBTSimple(chain: Chain) {
             index: utxo1.n,
             sequence: 0,
             witnessUtxo: {
-                script: Buffer.from(utxo1.scriptPubKey.hex, 'hex'),
+                script: Buffer.from(utxo1.  .hex, 'hex'),
                 value: 2000000,
             },
         });

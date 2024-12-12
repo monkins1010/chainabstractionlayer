@@ -16,9 +16,9 @@ const CommonVerusConfig = (network: Network): Partial<IConfig> => {
     return {
         network,
         chainOptions: {
-            uri: 'http://localhost:18443/',
+            uri: 'http://localhost:25789/',
             username: 'verus',
-            password: 'local321',
+            password: 'pass',
             network,
         },
         assets: [

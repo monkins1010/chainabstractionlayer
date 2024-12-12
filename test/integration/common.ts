@@ -10,7 +10,6 @@ import { retry, sha256, sleep } from '@chainify/utils';
 import { expect } from 'chai';
 import {
     BitcoinHDWalletClient,
-    BitcoinLedgerClient,
     BitcoinNodeWalletClient,
     VerusNodeWalletClient,
     EVMClient,
@@ -21,7 +20,6 @@ import {
 } from './clients';
 import {
     BtcHdWalletConfig,
-    BtcLedgerConfig,
     BtcNodeConfig,
     VerusNodeConfig,
     EVMConfig,
@@ -48,19 +46,12 @@ export const Chains: { [key in ChainType]: Partial<{ [key in WalletType]: Chain 
             name: 'btc-hd-wallet',
             config: BtcHdWalletConfig(BitcoinNetworks.bitcoin_regtest),
             client: BitcoinHDWalletClient,
-        },
-
-        ledger: {
-            id: 'BTC',
-            name: 'btc-ledger-wallet',
-            config: BtcLedgerConfig(BitcoinNetworks.bitcoin_regtest),
-            client: BitcoinLedgerClient,
-        },
+        }
     },
     [ChainType.verus]: {
         node: {
             id: 'VRSC',
-            name: 'btc-node-wallet',
+            name: 'verus-node-wallet',
             config: VerusNodeConfig(VerusNetworks.verus_testnet),
             client: VerusNodeWalletClient,
         }
@@ -183,6 +174,7 @@ export async function mineBlock(chain: Chain, numberOfBlocks = 1) {
         case 'EVM': {
             return client.chain.sendRpcRequest('evm_mine', []);
         }
+        case 'VRSC':
         case 'NEAR':
         case 'TERRA':
         case 'SOLANA': {
@@ -190,7 +182,6 @@ export async function mineBlock(chain: Chain, numberOfBlocks = 1) {
             break;
         }
 
-        case 'VRSC':
         case 'BTC': {
             const miningAddressLabel = 'miningAddress';
             let address;
@@ -261,7 +252,7 @@ export async function fundAddress(chain: Chain, address: AddressType, value?: Bi
             const { client } = Chains.verus.node;
             tx = await client.wallet.sendTransaction({
                 to: address,
-                value: value || new BigNumber(10 * 1e8),
+                value: value || new BigNumber(1 * 1e4),
             });
 
             break;

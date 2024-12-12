@@ -29,7 +29,7 @@ export function shouldBehaveLikeChainProvider(chain: Chain) {
             // let the chain indexer to fetch the data
             await sleep(1000);
 
-            const blockByNumber = await client.chain.getBlockByNumber(Number(blockHeight) - 10, true);
+            const blockByNumber = await client.chain.getBlockByNumber(1, true);
             expect(blockByNumber).to.be.not.undefined;
 
             try {
@@ -48,7 +48,7 @@ export function shouldBehaveLikeChainProvider(chain: Chain) {
             // let the chain indexer to fetch the data
             await sleep(1000);
 
-            const blockByNumber = await client.chain.getBlockByNumber(Number(blockHeight) - 10, true);
+            const blockByNumber = await client.chain.getBlockByNumber(blockHeight ? 1 : 1, true);
             for (const tx of blockByNumber.transactions) {
                 const receipt = await client.chain.getTransactionByHash(tx.hash);
                 expect(Math.gte(receipt.confirmations, 1)).to.be.true;

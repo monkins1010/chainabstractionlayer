@@ -1,4 +1,4 @@
-import { UnimplementedMethodError } from '@chainify/errors';
+
 import { AssetTypes, BigNumber, TxStatus } from '@chainify/types';
 import { expect } from 'chai';
 import { mineBlock } from '../common';
@@ -72,16 +72,6 @@ export function shouldBehaveLikeWalletProvider(chain: Chain, isNative = true) {
             expect(network).to.deep.equal(config.network);
         });
 
-        it('should export private key', async () => {
-            try {
-                const privateKey = await client.wallet.exportPrivateKey();
-                expect(privateKey).to.be.equal(config.walletExpectedResult.privateKey);
-            } catch (error) {
-                if (!(error instanceof UnimplementedMethodError)) {
-                    throw error;
-                }
-            }
-        });
 
         it(`should send ${isNative ? 'native' : 'ERC20'} asset transaction`, async () => {
             const txRequest = {

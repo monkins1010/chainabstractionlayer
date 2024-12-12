@@ -1,13 +1,14 @@
 import { InvalidAddressError } from '@chainify/errors';
 import { AddressType, BigNumber, Transaction, TxStatus } from '@chainify/types';
 import * as varuint from 'bip174/src/lib/converter/varint';
-import * as bitcoin from 'bitcoinjs-lib';
 import * as classify from 'bitcoinjs-lib/src/classify';
 import coinselect from 'coinselect';
 import coinselectAccumulative from 'coinselect/accumulative';
 import { VerusNetwork, Input, Output, Transaction as BitcoinTransaction, UTXO } from './types';
 
-const AddressTypes = ['legacy', 'p2sh-segwit', 'bech32'];
+const AddressTypes = ['raddress'];
+
+const bitgo = require('@bitgo/utxo-lib') // eslint-disable-line
 
 function calculateFee(numInputs: number, numOutputs: number, feePerByte: number) {
     return (numInputs * 148 + numOutputs * 34 + 10) * feePerByte;
@@ -72,29 +73,29 @@ const OUTPUT_TYPES_MAP = {
 };
 
 function decodeRawTransaction(hex: string, network: VerusNetwork): BitcoinTransaction {
-    const bjsTx = bitcoin.Transaction.fromHex(hex);
+    const bjsTx = bitgo.Transaction.fromHex(hex, network);
 
-    const vin = bjsTx.ins.map((input) => {
+    const vin = bjsTx.ins.map((input: any) => {
         return <Input>{
             txid: Buffer.from(input.hash).reverse().toString('hex'),
             vout: input.index,
             scriptSig: {
-                asm: bitcoin.script.toASM(input.script),
+                asm: bitgo.script.toASM(input.script),
                 hex: input.script.toString('hex'),
             },
-            txinwitness: input.witness.map((w) => w.toString('hex')),
+            txinwitness: input.witness.map((w: any) => w.toString('hex')),
             sequence: input.sequence,
         };
     });
 
-    const vout = bjsTx.outs.map((output, n) => {
+    const vout = bjsTx.outs.map((output: any, n: any) => {
         const type = classify.output(output.script);
 
         const vout: Output = {
             value: output.value / 1e8,
             n,
             scriptPubKey: {
-                asm: bitcoin.script.toASM(output.script),
+                asm: bitgo.script.toASM(output.script),
                 hex: output.script.toString('hex'),
                 reqSigs: 1, // TODO: not sure how to derive this
                 type: OUTPUT_TYPES_MAP[type] || type,
@@ -103,7 +104,7 @@ function decodeRawTransaction(hex: string, network: VerusNetwork): BitcoinTransa
         };
 
         try {
-            const address = bitcoin.address.fromOutputScript(output.script, network);
+            const address = bitgo.address.fromOutputScript(output.script, network);
             vout.scriptPubKey.addresses.push(address);
         } catch (e) {
             /** If output script is not parasable, we just skip it */
@@ -192,17 +193,17 @@ function witnessStackToScriptWitness(witness: Buffer[]): Buffer {
 }
 
 function getPubKeyHash(address: string, network: VerusNetwork) {
-    const outputScript = bitcoin.address.toOutputScript(address, network);
+    const outputScript = bitgo.address.toOutputScript(address, network);
     const type = classify.output(outputScript);
     if (![classify.types.P2PKH, classify.types.P2WPKH].includes(type)) {
         throw new Error(`Bitcoin swap doesn't support the address ${address} type of ${type}. Not possible to derive public key hash.`);
     }
 
     try {
-        const bech32 = bitcoin.address.fromBech32(address);
+        const bech32 = bitgo.address.fromBech32(address);
         return bech32.data;
     } catch (e) {
-        const base58 = bitcoin.address.fromBase58Check(address);
+        const base58 = bitgo.address.fromBase58Check(address);
         return base58.hash;
     }
 }

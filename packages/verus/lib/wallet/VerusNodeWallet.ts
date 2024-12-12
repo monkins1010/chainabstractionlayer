@@ -30,7 +30,7 @@ export class VerusNodeWalletProvider extends Wallet<any, any> implements IVerusW
     constructor(options?: VerusNodeWalletOptions, chainProvider?: Chain<VerusBaseChainProvider>) {
         super(chainProvider);
 
-        this._addressType = options?.addressType || VerusAddressType.BECH32;
+        this._addressType = options?.addressType || VerusAddressType.RADDRESS;
         this._network = chainProvider ? (chainProvider.getNetwork() as VerusNetwork) : options?.network;
         this._addressInfoCache = {};
     }
@@ -64,7 +64,7 @@ export class VerusNodeWalletProvider extends Wallet<any, any> implements IVerusW
         }
         const rawTxOutputs = await this.chainProvider.sendRpcRequest('createrawtransaction', [[], outputs]);
         const rawTxFunded = await this.chainProvider.sendRpcRequest('fundrawtransaction', [rawTxOutputs]);
-        const rawTxSigned = await this.chainProvider.sendRpcRequest('signrawtransactionwithwallet', [rawTxFunded.hex]);
+        const rawTxSigned = await this.chainProvider.sendRpcRequest('signrawtransaction', [rawTxFunded.hex]);
 
         const fee = new BigNumber(rawTxFunded.fee).times(1e8).toNumber();
         await this.chainProvider.sendRawTransaction(rawTxSigned.hex);
@@ -103,7 +103,7 @@ export class VerusNodeWalletProvider extends Wallet<any, any> implements IVerusW
     public async signMessage(message: string, from: string) {
         return this.chainProvider
             .sendRpcRequest('signmessage', [from.toString(), message])
-            .then((result: string) => Buffer.from(result, 'base64').toString('hex'));
+            .then((result: any) => Buffer.from(result.signature, 'base64').toString('hex'));
     }
 
     public async getBalance(assets: Asset[]): Promise<BigNumber[]> {
@@ -190,8 +190,8 @@ export class VerusNodeWalletProvider extends Wallet<any, any> implements IVerusW
         return this.chainProvider.sendRpcRequest('dumpprivkey', [address]);
     }
 
-    private async getNewAddress(addressType: VerusAddressType, label = '') {
-        const params = addressType ? [label, addressType] : [label];
+    private async getNewAddress(addressType: VerusAddressType) {
+        const params = addressType ? [""] : [""];
         const newAddress = await this.chainProvider.sendRpcRequest('getnewaddress', params);
 
         if (!newAddress) {
@@ -206,15 +206,15 @@ export class VerusNodeWalletProvider extends Wallet<any, any> implements IVerusW
             return this._addressInfoCache[address];
         }
 
-        const addressInfo: AddressInfo = await this.chainProvider.sendRpcRequest('getaddressinfo', [address]);
+        const addressInfo: AddressInfo = await this.chainProvider.sendRpcRequest('validateaddress', [address]);
 
-        let publicKey, derivationPath;
+        let publicKey;
 
         if (!addressInfo.iswatchonly) {
             publicKey = addressInfo.pubkey;
-            derivationPath = addressInfo.hdkeypath;
+
         }
-        const addressObject = new Address({ address, publicKey, derivationPath });
+        const addressObject = new Address({ address, publicKey });
         this._addressInfoCache[address] = addressObject;
         return addressObject;
     }
@@ -232,7 +232,7 @@ export class VerusNodeWalletProvider extends Wallet<any, any> implements IVerusW
 
     private async _sendTransaction(txRequest: TransactionRequest) {
         const value = new BigNumber(txRequest.value.toString()).dividedBy(1e8).toNumber();
-        const hash = await this.chainProvider.sendRpcRequest('sendtoaddress', [txRequest.to?.toString(), value, '', '', false, true]);
+        const hash = await this.chainProvider.sendRpcRequest('sendtoaddress', [txRequest.to?.toString(), value, '', '', false]);
         const transaction = await this.chainProvider.sendRpcRequest('gettransaction', [hash, true]);
         const fee = new BigNumber(transaction.fee).abs().times(1e8).toNumber();
         return normalizeTransactionObject(decodeRawTransaction(transaction.hex, this._network), fee);

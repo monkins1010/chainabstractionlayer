@@ -1,5 +1,11 @@
-version: '1'
 services:
+    verus-slave:
+        image: monkins1010/verus
+        environment:
+            - MODE=slave
+        command: -chain=VRSCTEST
+        networks:
+            - proxynet
     verus:
         image: monkins1010/verus
         environment:
@@ -8,14 +14,9 @@ services:
         ports:
             - "25789:25789"
         networks:
-            - proxynet 
-    verus-slave:
-        image: monkins1010/verus
-        environment:
-            - MODE=slave
-        command: -chain=VRSCTEST
-        networks:
             - proxynet
+        depends_on:
+            - verus-slave
 networks:
     proxynet:
         name: custom_network

@@ -41,7 +41,7 @@ export abstract class VerusBaseWalletProvider<T extends VerusBaseChainProvider =
 
   constructor(options: VerusWalletProviderOptions, chainProvider?: Chain<T>) {
 
-    const { baseDerivationPath, addressType = VerusAddressType.BECH32 } = options
+    const { baseDerivationPath, addressType = VerusAddressType.RADDRESS } = options
     const addressTypes = Object.values(VerusAddressType)
     if (!addressTypes.includes(addressType)) {
       throw new Error(`addressType must be one of ${addressTypes.join(',')}`)

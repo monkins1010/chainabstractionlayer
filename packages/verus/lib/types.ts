@@ -81,9 +81,9 @@ export interface UTXO {
 }
 
 export enum AddressType {
-    LEGACY = 'legacy',
-    P2SH_SEGWIT = 'p2sh-segwit',
-    BECH32 = 'bech32',
+    RADDRESS = 'raddress',
+    IADDRESS = 'iaddress',
+    ZADDRESS = 'zaddress'
 }
 
 export enum SwapMode {
