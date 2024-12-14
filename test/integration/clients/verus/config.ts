@@ -26,10 +26,10 @@ export const VerusHdWalletConfig = (network: Network): IConfig => {
             numberOfUsedAddresses: 1,
             unusedAddress: 'RY8UCUvpq1vL17q9MYAvmRLqThNHvhD6nR',
             address: 'RUhmNGEBBjiGypVc5cw5bxp2q2S1Y3PnL2',
-            privateKey: 'UxQVXU9Za2woeWURibkpEX8jxfacEnFxcWSiBv6Jv7uDzteXB4CM',
+            privateKey: 'UpKTEZCXHYgbQKojswcPhkA8uhmX6vRmvU6Z5DpSqpZ9cGNVZCLf',
             privateKeyRegex: /^[U]\w{51}$/,
             signedMessage:
-                '203a5f3e6066f58f8cf5b939d3f9a6427824482311ccdb3be136a4dc2738b9e9407c1813b77c753ef510c57c8c41c8675c547396b1c2cd62925d8e3cb92dfe9133',
+                '1fa9c95e1358a13642a869803ba69fa9a2bab37bc05aac0c073655f79e3ddb069f0ae85075536eb37bce1a1b557a2cf23135a1bd21e70cfb2b7efd2c00de7744bd',
         },
 
         recipientAddress: 'RY8UCUvpq1vL17q9MYAvmRLqThNHvhD6nR',

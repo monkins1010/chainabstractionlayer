@@ -25,27 +25,27 @@ async function checkBlockHeight(client: any, maxAttempts = 15): Promise<number> 
 
 
 export function shouldBehaveLikeVerusClient() {
-    if (false) { // eslint-disable-line
-        describe('Verus Client - Node Wallet', () => {
-            before(async () => {
+    //if (false) { // eslint-disable-line
+    describe('Verus Client - Node Wallet', () => {
+        before(async () => {
 
-                const { client, config } = Chains.verus.node;
-                const address = await client.wallet.getAddress();
-                const recipientAddress = await client.wallet.getUnusedAddress();
-                const privateKey = await client.chain.sendRpcRequest('dumpprivkey', [address.toString()]);
+            const { client, config } = Chains.verus.node;
+            const address = await client.wallet.getAddress();
+            const recipientAddress = await client.wallet.getUnusedAddress();
+            const privateKey = await client.chain.sendRpcRequest('dumpprivkey', [address.toString()]);
 
-                Chains.verus.node.config = assign(Chains.verus.node.config, {
-                    recipientAddress: recipientAddress.toString(),
-                    walletExpectedResult: { ...config.walletExpectedResult, privateKey },
-                });
-                await checkBlockHeight(client);
+            Chains.verus.node.config = assign(Chains.verus.node.config, {
+                recipientAddress: recipientAddress.toString(),
+                walletExpectedResult: { ...config.walletExpectedResult, privateKey },
             });
-            shouldBehaveLikeChainProvider(Chains.verus.node);
-            shouldBehaveLikeWalletProvider(Chains.verus.node);
-            shouldBehaveLikeVerusTransaction(Chains.verus.node);
-
+            await checkBlockHeight(client);
         });
-    }
+        shouldBehaveLikeChainProvider(Chains.verus.node);
+        shouldBehaveLikeWalletProvider(Chains.verus.node);
+        shouldBehaveLikeVerusTransaction(Chains.verus.node);
+
+    });
+    //   }
     describe('Verus Client - HD Wallet', () => {
         before(async () => {
             const { config } = Chains.verus.hd;
@@ -60,3 +60,5 @@ export function shouldBehaveLikeVerusClient() {
     });
 
 }
+
+

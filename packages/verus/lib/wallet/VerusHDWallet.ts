@@ -10,9 +10,9 @@ import { IVerusWallet } from './IVerusWallet';
 
 const varuint = require('varuint-bitcoin') // eslint-disable-line
 const utxolib = require('@bitgo/utxo-lib') // eslint-disable-line
-const { ECPair, script, ECSignature } = utxolib
+const { ECPair, script } = utxolib
 const createHash = require('create-hash') // eslint-disable-line
-const VERUS_DATA_SIGNATURE_PREFIX = 'Verus Signed Message:\n'
+const VERUS_DATA_SIGNATURE_PREFIX = 'Verus signed data:\n'
 
 export class VerusHDWalletProvider extends VerusBaseWalletProvider implements IVerusWallet<VerusBaseChainProvider> {
     private _mnemonic: string;
@@ -51,32 +51,16 @@ export class VerusHDWalletProvider extends VerusBaseWalletProvider implements IV
         const address = await this.getWalletAddress(typeof (from) === 'string' ? from : from.toString());
         const keyPair = await this.keyPair(address.derivationPath);
 
-        const msgHash = createHash('sha256').update(Buffer.concat([varuint.encode(Buffer.from(message, 'utf8').length), Buffer.from(message, 'utf8')])).digest()
-        console.log('msgHash:', msgHash.toString('hex'))
+        const messageWithLength = Buffer.concat([varuint.encode(Buffer.from(message, 'utf8').length), Buffer.from(message, 'utf8')])
+        const msgHash = createHash('sha256').update(messageWithLength).digest()
+        const PREFIX = Buffer.concat([varuint.encode(Buffer.from(VERUS_DATA_SIGNATURE_PREFIX, 'utf8').length), Buffer.from(VERUS_DATA_SIGNATURE_PREFIX, 'utf8')]);
         const hash = createHash('sha256')
-            .update(Buffer.concat([varuint.encode(Buffer.from(VERUS_DATA_SIGNATURE_PREFIX, 'utf8').length), Buffer.from(VERUS_DATA_SIGNATURE_PREFIX, 'utf8')]))
-            .update(msgHash.reverse())
+            .update(PREFIX)
+            .update(msgHash)
             .digest()
 
-        let signature = await keyPair.sign(hash);
-
-        if (Buffer.isBuffer(signature)) signature = ECSignature.fromRSBuffer(signature)
-
-        const signingAddress = keyPair.getAddress()
-
-        let compactSig;
-
-        // Try all possible recovery ids until one that can recover the
-        // correct pubkey is found. This is not the most efficient way to do this.
-        for (let recid = 0; recid < 4; recid++) {
-            compactSig = signature.toCompact(recid, true)
-            const recoveredKeyPair = ECPair.recoverFromSignature(hash, compactSig, utxolib.networks[this._network.name])
-
-            if (recoveredKeyPair.getAddress() === signingAddress) {
-                console.log('Recovered key patoWIFir:', keyPair.toWIF(), compactSig.toString('hex'))
-                return compactSig.toString('hex')
-            }
-        }
+        const sig = new utxolib.IdentitySignature(utxolib.networks[this._network.name])
+        return sig.signHashOffline(hash, keyPair).toString('hex');
 
     }
 

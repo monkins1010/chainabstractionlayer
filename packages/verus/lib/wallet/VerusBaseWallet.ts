@@ -19,6 +19,7 @@ import { VerusBaseChainProvider } from '../chain/VerusBaseChainProvider';
 import { InsufficientBalanceError } from '@chainify/errors'
 import { BIP32Interface } from 'bitcoinjs-lib'
 import memoize from 'memoizee'
+import OPS from 'bitcoin-ops'
 
 const bitgo = require('@bitgo/utxo-lib') // eslint-disable-line
 
@@ -95,7 +96,7 @@ export abstract class VerusBaseWalletProvider<T extends VerusBaseChainProvider =
       }
 
       if (tx.data) {
-        const scriptBuffer = script.compile([script.OPS.OP_RETURN, Buffer.from(tx.data, 'hex')])
+        const scriptBuffer = script.compile([OPS.OP_RETURN, Buffer.from(tx.data, 'hex')])
         targets.push({
           value: 0,
           script: scriptBuffer

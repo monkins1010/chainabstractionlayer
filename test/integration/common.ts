@@ -288,7 +288,7 @@ export async function fundAddress(chain: Chain, address: AddressType, value?: Bi
             const { client } = Chains.verus.node;
             tx = await client.wallet.sendTransaction({
                 to: address,
-                value: value || new BigNumber(1 * 1e4),
+                value: value || new BigNumber(10 * 1e8),
             });
 
             break;

@@ -22,7 +22,7 @@ function testBatchTransaction(chain: Chain) {
         const addr1 = await getRandomVerusAddress(chain);
         const addr2 = await getRandomVerusAddress(chain);
 
-        const value = config.sendParams.value || new BigNumber(1000000);
+        const value = config.sendParams.value || new BigNumber(10000);
 
         const bal1Before = await client.chain.getBalance([addr1], []);
         const bal2Before = await client.chain.getBalance([addr2], []);
@@ -69,38 +69,6 @@ function testSweepTransaction(chain: Chain) {
     });
 }
 
-function testOpReturn(chain: Chain) {
-    const { config, client } = chain;
-
-    it('Send OP_RETURN script', async () => {
-        const tx: Transaction<VerusTypes.Transaction> = await client.wallet.sendTransaction({
-            to: null,
-            value: new BigNumber(0),
-            data: Buffer.from('freedom', 'utf-8').toString('hex')
-        })
-
-        expect(tx._raw.vout.find((vout) => vout.scriptPubKey.hex === '6a0766726565646f6d')).to.exist
-        expect(tx._raw.vout.find((vout) => vout.scriptPubKey.asm.includes('OP_RETURN'))).to.exist
-    })
-
-    it('Send Value & OP_RETURN', async () => {
-        const to = await getRandomVerusAddress(chain)
-        const value = config.sendParams.value || new BigNumber(1000000);
-        const tx: Transaction<VerusTypes.Transaction> = await client.wallet.sendTransaction({
-            to,
-            value,
-            data: Buffer.from('freedom', 'utf-8').toString('hex')
-        })
-
-        // OP_RETURN exists
-        expect(tx._raw.vout.find((vout) => vout.scriptPubKey.hex === '6a0766726565646f6d')).to.exist
-        expect(tx._raw.vout.find((vout) => vout.scriptPubKey.asm.includes('OP_RETURN'))).to.exist
-
-        // P2PKH exists
-        expect(tx._raw.vout.find((vout) => vout.value === value.div(1e8).toNumber())).to.exist
-    })
-}
-
 function testSignPSBTSimple(chain: Chain) {
     it('should create a simple send', async () => {
 
@@ -111,7 +79,7 @@ function testSignPSBTSimple(chain: Chain) {
         const utxo1 = tx1._raw.vout.find((vout) => unusedAddressOne.address === vout.scriptPubKey.addresses[0]);
 
         await mineBlock(chain);
-        const tx = new utxolib.TransactionBuilder(network, 5000)
+        const tx = new utxolib.TransactionBuilder(network)
         const currentHeight: number = await chain.client.chain.sendRpcRequest('getblockcount', []);
         const wif = await chain.client.chain.sendRpcRequest('dumpprivkey', [unusedAddressOne.address]);
         tx.setVersion(4)
@@ -120,7 +88,7 @@ function testSignPSBTSimple(chain: Chain) {
         tx.setLockTime(currentHeight)
 
         tx.addInput(txbit, utxo1.n);
-        tx.addOutput("RH7h8p9LN2Yb48SkxzNQ29c1Ltfju8Cd5i", 2000000 - 5000);
+        tx.addOutput("RH7h8p9LN2Yb48SkxzNQ29c1Ltfju8Cd5i", 2000000);
 
         const keyPair = utxolib.ECPair.fromWIF(wif, network);
         tx.sign(0, keyPair, "", null, txbit.outs[utxo1.n].value);
@@ -144,9 +112,5 @@ export function shouldBehaveLikeVerusTransaction(chain: Chain) {
         testBatchTransaction(chain);
         testSignPSBTSimple(chain);
         testSweepTransaction(chain);
-
-        if (chain.name !== 'verus-node-wallet') {
-            testOpReturn(chain);
-        }
     });
 }

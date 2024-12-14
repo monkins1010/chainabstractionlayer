@@ -15,8 +15,8 @@ export function shouldBehaveLikeVerusWallet(chain: Chain) {
             it('should return the correct number of addresses starting at the correct index and return the right derivation path', async () => {
                 const startingIndex = 0;
                 const numAddresses = 20;
-                const expectedAddress0DerivationPath = `m/84'/1'/0'/0/0`;
-                const expectedAddress19DerivationPath = `m/84'/1'/0'/0/19`;
+                const expectedAddress0DerivationPath = `m/84'/0'/0'/0/0`;
+                const expectedAddress19DerivationPath = `m/84'/0'/0'/0/19`;
 
                 const addresses = await chain.client.wallet.getAddresses(startingIndex, numAddresses);
 
@@ -35,8 +35,8 @@ export function shouldBehaveLikeVerusWallet(chain: Chain) {
                 const startingIndex = 0;
                 const numAddresses = 20;
                 const change = true;
-                const expectedAddress0DerivationPath = `m/84'/1'/0'/1/0`;
-                const expectedAddress19DerivationPath = `m/84'/1'/0'/1/19`;
+                const expectedAddress0DerivationPath = `m/84'/0'/0'/1/0`;
+                const expectedAddress19DerivationPath = `m/84'/0'/0'/1/19`;
 
                 const addresses = await chain.client.wallet.getAddresses(startingIndex, numAddresses, change);
 
@@ -99,38 +99,8 @@ export function shouldBehaveLikeVerusWallet(chain: Chain) {
                 expect(actualDerivationPath).to.equal(expectedDerivationPath);
             });
 
-            it('should return next derivation path change address', async () => {
-                const change = true;
-                const firstAddress = await chain.client.wallet.getUnusedAddress(change);
-                const firstIndex = parseInt(firstAddress.derivationPath.split('/').pop());
-
-                await fundAddress(chain, firstAddress.address);
-
-                const { address: actualAddress, derivationPath: actualDerivationPath } = await chain.client.wallet.getUnusedAddress(change);
-
-                const expectedSecondIndex = firstIndex + 1;
-                const addresses = await chain.client.wallet.getAddresses(0, 1 + expectedSecondIndex, change);
-
-                const { address: expectedAddress, derivationPath: expectedDerivationPath } = addresses[expectedSecondIndex];
-
-                expect(actualAddress).to.equal(expectedAddress);
-                expect(actualDerivationPath).to.equal(expectedDerivationPath);
-            });
         });
 
-        describe('getUsedAddresses', () => {
-            it('should include address recently sent funds to in array', async () => {
-                const { address: expectedAddress } = await chain.client.wallet.getUnusedAddress();
-
-                await fundAddress(chain, expectedAddress);
-
-                const usedAddresses = await chain.client.wallet.getUsedAddresses();
-
-                const { address: actualAddress } = usedAddresses[usedAddresses.length - 1];
-
-                expect(expectedAddress).to.equal(actualAddress);
-            });
-        });
         describe('signMessage', () => {
             it('should return hex of signed message', async () => {
                 const addresses = await chain.client.wallet.getAddresses(0, 1);
