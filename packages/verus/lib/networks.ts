@@ -4,7 +4,6 @@ const bitgo = require('@bitgo/utxo-lib') // eslint-disable-line
 const verus: VerusNetwork = {
     name: 'verus',
     ...bitgo.networks.verus,
-    bitgokey: 'verus',
     coinType: '0',
     isTestnet: false
 }
@@ -12,8 +11,7 @@ const verus: VerusNetwork = {
 const verus_testnet: VerusNetwork = {
     name: 'verustest',
     ...bitgo.networks.verustest,
-    bitgokey: 'verustest',
-    coinType: '1',
+    coinType: '0',
     isTestnet: true
 }
 

@@ -8,7 +8,6 @@ export interface bitgo {
     name: string
     coinType: string
     isTestnet: boolean
-    bitgokey?: string
 }
 
 export interface VerusNetwork extends Network, VerusJsLibNetwork, bitgo { }
@@ -83,7 +82,8 @@ export interface UTXO {
 export enum AddressType {
     RADDRESS = 'raddress',
     IADDRESS = 'iaddress',
-    ZADDRESS = 'zaddress'
+    ZADDRESS = 'zaddress',
+    BECH32 = 'bech32',
 }
 
 export enum SwapMode {

@@ -13,6 +13,7 @@ import {
     BitcoinLedgerClient,
     BitcoinNodeWalletClient,
     VerusNodeWalletClient,
+    VerusHDWalletClient,
     EVMClient,
     EVMLedgerClient,
     NearClient,
@@ -24,6 +25,7 @@ import {
     BtcLedgerConfig,
     BtcNodeConfig,
     VerusNodeConfig,
+    VerusHdWalletConfig,
     EVMConfig,
     EVMLedgerConfig,
     NearConfig,
@@ -63,7 +65,13 @@ export const Chains: { [key in ChainType]: Partial<{ [key in WalletType]: Chain 
             name: 'verus-node-wallet',
             config: VerusNodeConfig(VerusNetworks.verus_testnet),
             client: VerusNodeWalletClient,
-        }
+        },
+        hd: {
+            id: 'VRSC',
+            name: 'verus-hd-wallet',
+            config: VerusHdWalletConfig(VerusNetworks.verus_testnet),
+            client: VerusHDWalletClient,
+        },
     },
 
     [ChainType.evm]: {
@@ -142,6 +150,7 @@ export async function increaseTime(chain: Chain, timestamp: number) {
             break;
         }
 
+        case 'VRSC':
         case 'NEAR':
         case 'TERRA':
         case 'SOLANA': {
@@ -181,6 +190,26 @@ export async function mineBlock(chain: Chain, numberOfBlocks = 1) {
     switch (chain.id) {
         case 'EVM': {
             return client.chain.sendRpcRequest('evm_mine', []);
+        }
+        case 'VRSC': {
+            try {
+                // Wait for a block to be mined naturally
+                const curentHeight = await client.chain.sendRpcRequest('getblockcount', []);
+                process.stdout.write('Waiting for mined block.');
+                while (true) { // eslint-disable-line
+                    const newHeight = await client.chain.sendRpcRequest('getblockcount', []);
+                    if (newHeight > curentHeight) {
+                        break;
+                    }
+                    process.stdout.write('.');
+                    await sleep(2000);
+                }
+                process.stdout.write('\n');
+
+            } catch (e) {
+                await sleep(10000);
+            }
+            break;
         }
         case 'NEAR':
         case 'TERRA':
@@ -250,6 +279,16 @@ export async function fundAddress(chain: Chain, address: AddressType, value?: Bi
             tx = await client.wallet.sendTransaction({
                 to: address,
                 value: value || new BigNumber(10 * 1e8),
+            });
+
+            break;
+        }
+
+        case 'VRSC': {
+            const { client } = Chains.verus.node;
+            tx = await client.wallet.sendTransaction({
+                to: address,
+                value: value || new BigNumber(1 * 1e4),
             });
 
             break;

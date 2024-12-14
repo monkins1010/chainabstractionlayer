@@ -10,3 +10,4 @@ export * as VerusTypes from './types';
 export * as VerusUtils from './utils';
 export { VerusBaseWalletProvider } from './wallet/VerusBaseWallet';
 export { VerusNodeWalletProvider } from './wallet/VerusNodeWallet';
+export { VerusHDWalletProvider } from './wallet/VerusHDWallet';

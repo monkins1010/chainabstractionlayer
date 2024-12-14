@@ -39,7 +39,7 @@ export function shouldBehaveLikeWalletProvider(chain: Chain, isNative = true) {
 
         it('should sign message', async () => {
             const from = await client.wallet.getAddress();
-            const signedMessage = await client.wallet.signMessage('secret', from);
+            const signedMessage = await client.wallet.signMessage('secret', from.toString());
             if (config.walletExpectedResult.signedMessage) {
                 expect(signedMessage).to.be.equal(config.walletExpectedResult.signedMessage);
             }
@@ -47,7 +47,7 @@ export function shouldBehaveLikeWalletProvider(chain: Chain, isNative = true) {
 
         it('should return hex of signed message', async () => {
             const from = await client.wallet.getAddress();
-            const signedMessage = await client.wallet.signMessage('secret', from);
+            const signedMessage = await client.wallet.signMessage('secret', from.toString());
             const signedMessageBuffer = Buffer.from(signedMessage, 'hex');
             if (config.walletExpectedResult.signedMessage) {
                 expect(signedMessage).to.equal(signedMessageBuffer.toString('hex')).to.be.equal(config.walletExpectedResult.signedMessage);

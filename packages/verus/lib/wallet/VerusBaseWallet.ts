@@ -1,6 +1,7 @@
 import { Chain, Wallet } from '@chainify/client';
 import { selectCoins, normalizeTransactionObject, decodeRawTransaction, CoinSelectTarget } from '../utils'
 import {
+  AddressTxCounts,
   AddressType as VerusAddressType,
   VerusNetwork,
   VerusWalletProviderOptions,
@@ -8,8 +9,7 @@ import {
   OutputTarget,
   Output,
   PsbtInputTarget,
-  Transaction as BtcTransaction,
-  AddressDeltas,
+  Transaction as VerusTransaction,
   UTXO,
 } from '../types';
 
@@ -17,10 +17,12 @@ import { Transaction, Address, BigNumber, TransactionRequest, AddressType, Asset
 import { asyncSetImmediate } from '@chainify/utils'
 import { VerusBaseChainProvider } from '../chain/VerusBaseChainProvider';
 import { InsufficientBalanceError } from '@chainify/errors'
-import { BIP32Interface, script } from 'bitcoinjs-lib'
+import { BIP32Interface } from 'bitcoinjs-lib'
 import memoize from 'memoizee'
 
 const bitgo = require('@bitgo/utxo-lib') // eslint-disable-line
+
+const { script } = bitgo;
 
 const ADDRESS_GAP = 20
 
@@ -34,10 +36,10 @@ type DerivationCache = { [index: string]: Address }
 
 export abstract class VerusBaseWalletProvider<T extends VerusBaseChainProvider = any, S = any> extends Wallet<T, S> {
 
-  _baseDerivationPath: string
-  _network: VerusNetwork
-  _addressType: VerusAddressType
-  _derivationCache: DerivationCache
+  protected _baseDerivationPath: string
+  protected _network: VerusNetwork
+  protected _addressType: VerusAddressType
+  protected _derivationCache: DerivationCache
 
   constructor(options: VerusWalletProviderOptions, chainProvider?: Chain<T>) {
 
@@ -58,13 +60,13 @@ export abstract class VerusBaseWalletProvider<T extends VerusBaseChainProvider =
   protected onChainProviderUpdate(chainProvider: Chain<T>) {
     this._network = chainProvider.getNetwork() as VerusNetwork;
   }
-  abstract baseDerivationNode(): Promise<BIP32Interface>
-  abstract _buildTransaction(
+  protected abstract baseDerivationNode(): Promise<BIP32Interface>
+  protected abstract buildTransaction(
     targets: OutputTarget[],
     feePerByte?: number,
     fixedInputs?: Input[]
   ): Promise<{ hex: string; fee: number }>
-  abstract _buildSweepTransaction(
+  protected abstract buildSweepTransaction(
     externalChangeAddress: string,
     feePerByte?: number
   ): Promise<{ hex: string; fee: number }>
@@ -112,42 +114,18 @@ export abstract class VerusBaseWalletProvider<T extends VerusBaseChainProvider =
     this._derivationCache = derivationCache
   }
 
-  getMethod(method: string, requestor: any = this) {
-    const originalGetMethod = this.getMethod
-    const memoizedGetFeePerByte: any = memoize(this.getMethod('getFeePerByte'), { primitive: true })
-    const memoizedGetUnspentTransactions: any = memoize(this.getMethod('getUnspentTransactions'), { primitive: true })
-    const memoizedGetAddressDeltas: any = memoize(this.getMethod('getAddressDeltas'), { primitive: true })
-
-    if (method === 'getFeePerByte') return memoizedGetFeePerByte
-    if (method === 'getUnspentTransactions') return memoizedGetUnspentTransactions
-    else if (method === 'getAddressDeltas') return memoizedGetAddressDeltas
-    else return originalGetMethod.bind(this)(method, requestor)
+  protected async _sendTransaction(transactions: OutputTarget[], feePerByte?: number) {
+    const { hex, fee } = await this.buildTransaction(transactions, feePerByte);
+    await this.chainProvider.sendRawTransaction(hex);
+    return normalizeTransactionObject(decodeRawTransaction(hex, this._network), fee);
   }
 
-  async buildTransaction(output: OutputTarget, feePerByte: number) {
-    return this._buildTransaction([output], feePerByte)
-  }
-
-  async buildBatchTransaction(outputs: OutputTarget[]) {
-    return this._buildTransaction(outputs)
-  }
-
-  async _sendTransaction(transactions: OutputTarget[], feePerByte?: number) {
-    const { hex, fee } = await this._buildTransaction(transactions, feePerByte)
-    await this.getMethod('sendRawTransaction')(hex)
-    return normalizeTransactionObject(decodeRawTransaction(hex, this._network), fee)
-  }
-
-  async sendTransaction(options: TransactionRequest) {
+  public async sendTransaction(options: TransactionRequest) {
     return this._sendTransaction(this.sendOptionsToOutputs([options]), options.fee as number)
   }
 
   public async sendBatchTransaction(transactions: TransactionRequest[]) {
     return [await this._sendTransaction(this.sendOptionsToOutputs(transactions))];
-  }
-
-  async buildSweepTransaction(externalChangeAddress: string, feePerByte: number) {
-    return this._buildSweepTransaction(externalChangeAddress, feePerByte)
   }
 
   public async sendSweepTransaction(externalChangeAddress: AddressType, _asset: Asset, feePerByte: number) {
@@ -156,9 +134,9 @@ export abstract class VerusBaseWalletProvider<T extends VerusBaseChainProvider =
     return normalizeTransactionObject(decodeRawTransaction(hex, this._network), fee);
   }
 
-  async updateTransactionFee(tx: Transaction<BtcTransaction> | string, newFeePerByte: number) {
+  async updateTransactionFee(tx: Transaction<VerusTransaction> | string, newFeePerByte: number) {
     const txHash = typeof tx === 'string' ? tx : tx.hash
-    const transaction: BtcTransaction = (await this.getMethod('getTransactionByHash')(txHash))._raw
+    const transaction: VerusTransaction = (await this.chainProvider.getTransactionByHash(txHash))._raw;
     const fixedInputs = [transaction.vin[0]] // TODO: should this pick more than 1 input? RBF doesn't mandate it
 
     const lookupAddresses = transaction.vout.map((vout: Output) => vout.scriptPubKey.addresses[0])
@@ -175,8 +153,8 @@ export abstract class VerusBaseWalletProvider<T extends VerusBaseChainProvider =
       address: output.scriptPubKey.addresses[0],
       value: new BigNumber(output.value).times(1e8).toNumber()
     }))
-    const { hex, fee } = await this._buildTransaction(transactions, newFeePerByte, fixedInputs)
-    await this.getMethod('sendRawTransaction')(hex)
+    const { hex, fee } = await this.buildTransaction(transactions, newFeePerByte, fixedInputs)
+    await this.chainProvider.sendRawTransaction(hex);
     return normalizeTransactionObject(decodeRawTransaction(hex, this._network), fee)
   }
 
@@ -195,27 +173,25 @@ export abstract class VerusBaseWalletProvider<T extends VerusBaseChainProvider =
     }
   }
 
-  async getWalletAddress(address: string) {
-    const externalAddress = await this.findAddress([address], false)
-    if (externalAddress) return externalAddress
-    const changeAddress = await this.findAddress([address], true)
-    if (changeAddress) return changeAddress
+  public async getWalletAddress(address: string) {
+    const externalAddress = await this.findAddress([address], false);
+    if (externalAddress) {
+      return externalAddress;
+    }
 
-    throw new Error('Wallet does not contain address')
+    const changeAddress = await this.findAddress([address], true);
+    if (changeAddress) {
+      return changeAddress;
+    }
+
+    throw new Error('Wallet does not contain address');
   }
 
   getAddressFromPublicKey(publicKey: Buffer) {
-    return bitgo.ECPair.fromPublicKeyBuffer(publicKey, bitgo.networks[this._network.bitgokey]).getAddress()
+    return bitgo.ECPair.fromPublicKeyBuffer(publicKey, bitgo.networks[this._network.name]).getAddress()
   }
 
-  async importAddresses() {
-    const change = await this.getAddresses(0, 200, true)
-    const nonChange = await this.getAddresses(0, 200, false)
-    const all = [...nonChange, ...change].map((address) => address.address)
-    await this.getMethod('importAddresses')(all)
-  }
-
-  async getDerivationPathAddress(path: string) {
+  protected async getDerivationPathAddress(path: string) {
     if (path in this._derivationCache) {
       return this._derivationCache[path]
     }
@@ -295,27 +271,27 @@ export abstract class VerusBaseWalletProvider<T extends VerusBaseChainProvider =
         addrList = addrList.concat(externalAddresses)
       }
 
-      const addressDeltas: AddressDeltas = await this.getMethod('getAddressDeltas')(addrList)
+      const transactionCounts: AddressTxCounts = await this.chainProvider.getProvider().getAddressTransactionCounts(addrList);
 
       for (const address of addrList) {
-        const isUsed = addressDeltas[address.address].length > 0
-        const isChangeAddress = changeAddresses.find((a) => address.address === a.address)
-        const key = isChangeAddress ? 'change' : 'external'
+        const isUsed = transactionCounts[address.toString()] > 0;
+        const isChangeAddress = changeAddresses.find((a) => address.toString() === a.toString());
+        const key = isChangeAddress ? 'change' : 'external';
 
         if (isUsed) {
-          usedAddresses.push(address)
-          addressCountMap[key] = 0
-          unusedAddressMap[key] = null
+          usedAddresses.push(address);
+          addressCountMap[key] = 0;
+          unusedAddressMap[key] = null;
         } else {
-          addressCountMap[key]++
+          addressCountMap[key]++;
 
           if (!unusedAddressMap[key]) {
-            unusedAddressMap[key] = address
+            unusedAddressMap[key] = address;
           }
         }
       }
 
-      addressIndex += numAddressPerCall
+      addressIndex += numAddressPerCall;
     }
 
     return {
@@ -338,25 +314,22 @@ export abstract class VerusBaseWalletProvider<T extends VerusBaseChainProvider =
     )
   }
 
-  async withCachedUtxos(func: () => any) {
-    const originalGetMethod = this.getMethod
-    const memoizedGetFeePerByte = memoize(this.getMethod('getFeePerByte'), { primitive: true })
-    const memoizedGetUnspentTransactions = memoize(this.getMethod('getUnspentTransactions'), { primitive: true })
-    const memoizedGetAddressDeltas = memoize(this.getMethod('getAddressDeltas'), {
-      primitive: true
-    })
-    this.getMethod = (method: string, requestor: any = this) => {
-      if (method === 'getFeePerByte') return memoizedGetFeePerByte
-      if (method === 'getUnspentTransactions') return memoizedGetUnspentTransactions
-      else if (method === 'getAddressDeltas') return memoizedGetAddressDeltas
-      else return originalGetMethod.bind(this)(method, requestor)
-    }
+  protected async withCachedUtxos(func: () => any) {
+    const originalProvider = this.chainProvider.getProvider();
+    const memoizedGetFeePerByte = memoize(originalProvider.getFeePerByte, { primitive: true });
+    const memoizedGetUnspentTransactions = memoize(originalProvider.getUnspentTransactions, { primitive: true });
+    const memoizedGetAddressTransactionCounts = memoize(originalProvider.getAddressTransactionCounts, { primitive: true });
 
-    const result = await func.bind(this)()
+    const newProvider = originalProvider;
+    newProvider.getFeePerByte = memoizedGetFeePerByte;
+    newProvider.getUnspentTransactions = memoizedGetUnspentTransactions;
+    newProvider.getAddressTransactionCounts = memoizedGetAddressTransactionCounts;
 
-    this.getMethod = originalGetMethod
+    this.chainProvider.setProvider(newProvider);
+    const result = await func.bind(this)();
+    this.chainProvider.setProvider(originalProvider);
 
-    return result
+    return result;
   }
 
   async getTotalFee(opts: TransactionRequest, max: boolean) {
@@ -403,7 +376,7 @@ export abstract class VerusBaseWalletProvider<T extends VerusBaseChainProvider =
       nonChange: 0
     }
 
-    const feePerBytePromise = this.getMethod('getFeePerByte')()
+    const feePerBytePromise = this.chainProvider.getProvider().getFeePerByte();
     let utxos: UTXO[] = []
 
     while (addressCountMap.change < ADDRESS_GAP || addressCountMap.nonChange < ADDRESS_GAP) {
@@ -426,7 +399,7 @@ export abstract class VerusBaseWalletProvider<T extends VerusBaseChainProvider =
       const fixedUtxos: UTXO[] = []
       if (fixedInputs.length > 0) {
         for (const input of fixedInputs) {
-          const txHex = await this.getMethod('getRawTransactionByHash')(input.txid)
+          const txHex = await this.chainProvider.getProvider().getRawTransactionByHash(input.txid);
           const tx = decodeRawTransaction(txHex, this._network)
           const value = new BigNumber(tx.vout[input.vout].value).times(1e8).toNumber()
           const address = tx.vout[input.vout].scriptPubKey.addresses[0]
@@ -437,7 +410,7 @@ export abstract class VerusBaseWalletProvider<T extends VerusBaseChainProvider =
       }
 
       if (!sweep || fixedUtxos.length === 0) {
-        const _utxos: UTXO[] = await this.getMethod('getUnspentTransactions')(addrList)
+        const _utxos: UTXO[] = await this.chainProvider.getProvider().getUnspentTransactions(addrList);
         utxos.push(
           ..._utxos.map((utxo) => {
             const addr = addrList.find((a) => a.address === utxo.address)
@@ -453,12 +426,12 @@ export abstract class VerusBaseWalletProvider<T extends VerusBaseChainProvider =
 
       const utxoBalance = utxos.reduce((a, b) => a + (b.value || 0), 0)
 
-      const addressDeltas: AddressDeltas = await this.getMethod('getAddressDeltas')(addrList)
+      const transactionCounts: AddressTxCounts = await this.chainProvider.getProvider().getAddressTransactionCounts(addrList);
 
-      if (!feePerByte) feePerByte = await feePerBytePromise
-      const minRelayFee = await this.getMethod('getMinRelayFee')()
+      if (!feePerByte) feePerByte = await feePerBytePromise;
+      const minRelayFee = await this.chainProvider.getProvider().getMinRelayFee();
       if (feePerByte < minRelayFee) {
-        throw new Error(`Fee supplied (${feePerByte} sat/b) too low. Minimum relay fee is ${minRelayFee} sat/b`)
+        throw new Error(`Fee supplied (${feePerByte} sat/b) too low. Minimum relay fee is ${minRelayFee} sat/b`);
       }
 
       let targets: CoinSelectTarget[]
@@ -494,19 +467,20 @@ export abstract class VerusBaseWalletProvider<T extends VerusBaseChainProvider =
         }
       }
 
+
       for (const address of addrList) {
-        const isUsed = addressDeltas[address.address].length > 0
-        const isChangeAddress = changeAddresses.find((a) => address.address === a.address)
-        const key = isChangeAddress ? 'change' : 'nonChange'
+        const isUsed = transactionCounts[address.address];
+        const isChangeAddress = changeAddresses.find((a) => address.address === a.address);
+        const key = isChangeAddress ? 'change' : 'nonChange';
 
         if (isUsed) {
-          addressCountMap[key] = 0
+          addressCountMap[key] = 0;
         } else {
-          addressCountMap[key]++
+          addressCountMap[key]++;
         }
       }
 
-      addressIndex += numAddressPerCall
+      addressIndex += numAddressPerCall;
     }
 
     throw new InsufficientBalanceError('Not enough balance')

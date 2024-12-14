@@ -1,9 +1,10 @@
 import { JsonRpcProvider } from '@chainify/client';
-import { AddressType, BigNumber, Transaction } from '@chainify/types';
-import { AddressTxCounts, UTXO as VerusUTXO } from '../../types';
+import { AddressType, BigNumber, Transaction, Address } from '@chainify/types';
+import { AddressTxCounts, UTXO as VerusUTXO, AddressDeltas } from '../../types';
 import { decodeRawTransaction, normalizeTransactionObject } from '../../utils';
 import { VerusBaseChainProvider } from '../VerusBaseChainProvider';
-import { ProviderOptions, ReceivedByAddress, UTXO } from './types';
+import { ProviderOptions, UTXO } from './types';
+import { AddressDelta } from '../../rpc';
 
 export class VerusJsonRpcBaseProvider extends VerusBaseChainProvider {
     public jsonRpc: JsonRpcProvider;
@@ -57,13 +58,32 @@ export class VerusJsonRpcBaseProvider extends VerusBaseChainProvider {
 
     public async getAddressTransactionCounts(_addresses: AddressType[]): Promise<AddressTxCounts> {
         const addresses = _addresses.map((a) => a.toString());
-        const receivedAddresses: ReceivedByAddress[] = await this.jsonRpc.send('listreceivedbyaddress', [0, false, true]);
-        return addresses.reduce((acc: AddressTxCounts, addr) => {
-            const receivedAddress = receivedAddresses.find((receivedAddress) => receivedAddress.address === addr);
-            const transactionCount = receivedAddress ? receivedAddress.txids.length : 0;
-            acc[addr] = transactionCount;
-            return acc;
-        }, {});
+        const addressDeltasRec: AddressDelta[] = await this.jsonRpc.send('getaddressdeltas', [{ addresses: addresses }])
+        const addressTxCounts: AddressTxCounts = {}
+
+        for (const delta of addressDeltasRec) {
+            if (addressTxCounts[delta.address]) addressTxCounts[delta.address]++
+            else addressTxCounts[delta.address] = 1
+        }
+
+        return addressTxCounts;
+    }
+
+    public async getAddressDeltas(_addresses: (Address | string)[]) {
+        const addresses = _addresses.map((a) => a.toString());
+        const addressDeltasRec: AddressDelta[] = await this.jsonRpc.send('getaddressdeltas', [{ addresses: addresses }])
+        const deltasFormatted: AddressDeltas = {}
+
+        for (const address of addresses) {
+            deltasFormatted[address] = []
+        }
+
+        for (const delta of addressDeltasRec) {
+            if (deltasFormatted[delta.address]) deltasFormatted[delta.address].push(delta)
+            else deltasFormatted[delta.address] = [delta]
+        }
+
+        return deltasFormatted
     }
 
     public async getMinRelayFee(): Promise<number> {

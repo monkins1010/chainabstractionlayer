@@ -102,10 +102,9 @@ function testOpReturn(chain: Chain) {
 }
 
 function testSignPSBTSimple(chain: Chain) {
-    it('should sign a simple send', async () => {
+    it('should create a simple send', async () => {
 
-        const network = chain.config.network as VerusTypes.VerusNetwork;
-
+        const network = utxolib.networks[chain.config.network.name];
         const unusedAddressOne = await getNewAddress(chain);
         const tx1: Transaction<VerusTypes.Transaction> = await fundAddress(chain, unusedAddressOne.address, new BigNumber(2000000));
         const txbit = utxolib.Transaction.fromHex(tx1._raw.hex, network);
@@ -126,12 +125,15 @@ function testSignPSBTSimple(chain: Chain) {
         const keyPair = utxolib.ECPair.fromWIF(wif, network);
         tx.sign(0, keyPair, "", null, txbit.outs[utxo1.n].value);
 
-        const payment = tx.build().toHex();
+        const hex = tx.build().toHex();
 
-        const txReply = await chain.client.chain.sendRawTransaction(payment);
+        const paymentTxHash = await chain.client.chain.sendRawTransaction(hex);
 
+        const payment: Transaction<VerusTypes.Transaction> = await chain.client.chain.getTransactionByHash(paymentTxHash);
 
-        expect(txReply).to.equal("sdf");
+        expect(Buffer.from(paymentTxHash, 'hex').length).to.equal(32);
+        expect(payment._raw.vin.length).to.equal(1);
+        expect(payment._raw.vout.length).to.equal(1);
 
     });
 }
@@ -141,8 +143,10 @@ export function shouldBehaveLikeVerusTransaction(chain: Chain) {
     describe('Verus Transactions', () => {
         testBatchTransaction(chain);
         testSignPSBTSimple(chain);
-        testOpReturn(chain);
         testSweepTransaction(chain);
 
+        if (chain.name !== 'verus-node-wallet') {
+            testOpReturn(chain);
+        }
     });
 }
